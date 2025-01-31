@@ -1,0 +1,69 @@
+class Solution {
+    // Function to solve Sudoku
+    static boolean solve(int[][] mat, int row, int col) {
+        // If we reach beyond the last row, Sudoku is solved
+        if (row == 9) {
+            return true;
+        }
+
+        // Move to the next row if we reach the last column
+        int nextRow = (col == 8) ? row + 1 : row;
+        int nextCol = (col == 8) ? 0 : col + 1;
+
+        // If cell is already filled, move to the next cell
+        if (mat[row][col] != 0) {
+            return solve(mat, nextRow, nextCol);
+        }
+
+        // Try placing digits from 1 to 9
+        for (int num = 1; num <= 9; num++) {
+            if (isSafe(mat, row, col, num)) {
+                mat[row][col] = num; // Place the number
+                if (solve(mat, nextRow, nextCol)) {
+                    return true; // If solution found, return true
+                }
+                mat[row][col] = 0; // Backtrack
+            }
+        }
+
+        return false; // No valid number found, backtrack
+    }
+
+    // Function to check if it's safe to place a number
+    static boolean isSafe(int[][] mat, int row, int col, int num) {
+        // Check row and column
+        for (int i = 0; i < 9; i++) {
+            if (mat[row][i] == num || mat[i][col] == num) {
+                return false;
+            }
+        }
+
+        // Check 3x3 sub-grid
+        int startRow = (row / 3) * 3;
+        int startCol = (col / 3) * 3;
+        for (int i = startRow; i < startRow + 3; i++) {
+            for (int j = startCol; j < startCol + 3; j++) {
+                if (mat[i][j] == num) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Function to solve Sudoku
+    static void solveSudoku(int[][] mat) {
+        solve(mat, 0, 0); // Start solving from the first cell
+    }
+
+    // Function to print the solved Sudoku
+    static void printSudoku(int[][] mat) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print(mat[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+}
