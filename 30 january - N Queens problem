@@ -1,0 +1,40 @@
+class Solution {
+    public ArrayList<ArrayList<Integer>> nQueen(int n) {
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        int[] board = new int[n];
+        solve(n, ans, board, 0);
+        return ans;
+    }
+
+    public void solve(int n, ArrayList<ArrayList<Integer>> ans, int[] board, int col) {
+        if (col == n) {
+            ans.add(convert(board));
+            return;
+        }
+
+        for (int row = 1; row <= n; row++) {
+            if (isSafe(board, col, row)) {
+                board[col] = row;
+                solve(n, ans, board, col + 1);
+                board[col] = 0;
+            }
+        }
+    }
+
+    public ArrayList<Integer> convert(int[] board) {
+        ArrayList<Integer> result = new ArrayList<>();
+        for (int num : board) {
+            result.add(num);
+        }
+        return result;
+    }
+
+    public boolean isSafe(int[] board, int col, int row) {
+        for (int prevCol = 0; prevCol < col; prevCol++) {
+            if (board[prevCol] == row || Math.abs(board[prevCol] - row) == Math.abs(prevCol - col)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
