@@ -1,0 +1,16 @@
+class Solution {
+    // Function to find the height of a binary tree.
+    int height(Node node) {
+        // Base case: if the tree is empty, return -1 for edges or 0 for nodes
+        if (node == null) {
+            return -1; // Since height is measured in edges, return -1
+        }
+        
+        // Recursively find the height of left and right subtrees
+        int leftHeight = height(node.left);
+        int rightHeight = height(node.right);
+        
+        // Height of the tree is the maximum height of left or right subtree plus 1
+        return Math.max(leftHeight, rightHeight) + 1;
+    }
+}
