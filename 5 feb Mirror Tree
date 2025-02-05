@@ -1,0 +1,46 @@
+class Solution {
+    // Function to convert a binary tree into its mirror tree.
+    void mirror(Node node) {
+        if (node == null) {
+            return;
+        }
+        
+        // Swap left and right subtree
+        Node temp = node.left;
+        node.left = node.right;
+        node.right = temp;
+        
+        // Recursively call mirror on left and right subtree
+        mirror(node.left);
+        mirror(node.right);
+    }
+
+    // Function to perform level order traversal and return list representation
+    List<String> printLevelOrder(Node root) {
+        List<String> result = new ArrayList<>();
+        if (root == null) {
+            return result;
+        }
+        
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            if (node != null) {
+                result.add(String.valueOf(node.data));
+                queue.add(node.left);
+                queue.add(node.right);
+            } else {
+                result.add("N");
+            }
+        }
+        
+        // Removing trailing 'N's for proper output formatting
+        while (!result.isEmpty() && result.get(result.size() - 1).equals("N")) {
+            result.remove(result.size() - 1);
+        }
+        
+        return result;
+    }
+}
