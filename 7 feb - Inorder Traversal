@@ -1,0 +1,29 @@
+
+/* A Binary Tree node
+
+class Node {
+    int data;
+    Node left, right;
+   Node(int item)    {
+        data = item;
+        left = right = null;
+    }
+}
+*/
+class Solution {
+    // Function to return a list containing the inorder traversal of the tree.
+    ArrayList<Integer> inOrder(Node root) {
+        ArrayList<Integer> result = new ArrayList<>();
+        inorderTraversal(root, result);
+        return result;
+    }
+
+    // Helper function for recursive inorder traversal
+    void inorderTraversal(Node node, ArrayList<Integer> result) {
+        if (node == null) return;
+
+        inorderTraversal(node.left, result);  // Visit left subtree
+        result.add(node.data);                // Visit root
+        inorderTraversal(node.right, result); // Visit right subtree
+    }
+}
