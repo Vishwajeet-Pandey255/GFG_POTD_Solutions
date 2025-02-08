@@ -1,0 +1,44 @@
+class Solution {
+    ArrayList<Integer> boundaryTraversal(Node node) {
+        ArrayList<Integer> result = new ArrayList<>();
+        if (node == null) return result;
+        
+        if (!isLeaf(node)) result.add(node.data);
+        
+        addLeftBoundary(node.left, result);
+        addLeaves(node, result);
+        addRightBoundary(node.right, result);
+        
+        return result;
+    }
+    
+    private void addLeftBoundary(Node node, ArrayList<Integer> result) {
+        while (node != null) {
+            if (!isLeaf(node)) result.add(node.data);
+            node = (node.left != null) ? node.left : node.right;
+        }
+    }
+    
+    private void addLeaves(Node node, ArrayList<Integer> result) {
+        if (node == null) return;
+        if (isLeaf(node)) {
+            result.add(node.data);
+            return;
+        }
+        addLeaves(node.left, result);
+        addLeaves(node.right, result);
+    }
+    
+    private void addRightBoundary(Node node, ArrayList<Integer> result) {
+        Stack<Integer> stack = new Stack<>();
+        while (node != null) {
+            if (!isLeaf(node)) stack.push(node.data);
+            node = (node.right != null) ? node.right : node.left;
+        }
+        while (!stack.isEmpty()) result.add(stack.pop());
+    }
+    
+    private boolean isLeaf(Node node) {
+        return (node.left == null && node.right == null);
+    }
+}
