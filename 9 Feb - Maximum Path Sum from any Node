@@ -1,0 +1,30 @@
+class Solution {
+    int maxSum;
+    
+    // Function to return maximum path sum from any node in a tree.
+    
+    int findMaxSum(Node node) {
+        maxSum = Integer.MIN_VALUE;
+        findMaxPathSum(node);
+        return maxSum;
+    }
+    
+    private int findMaxPathSum(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        
+        // Compute the maximum path sum for left and right subtrees
+        int leftSum = Math.max(0, findMaxPathSum(node.left));
+        int rightSum = Math.max(0, findMaxPathSum(node.right));
+        
+        // Calculate the maximum path sum through the current node
+        int currentMax = leftSum + rightSum + node.data;
+        
+        // Update the overall maximum path sum
+        maxSum = Math.max(maxSum, currentMax);
+        
+        // Return the max sum including the current node and one of its subtrees
+        return node.data + Math.max(leftSum, rightSum);
+    }
+}
