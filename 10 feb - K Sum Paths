@@ -1,0 +1,29 @@
+class Solution {
+    public int sumK(Node root, int k) {
+        HashMap<Integer, Integer> prefixSum = new HashMap<>();
+        prefixSum.put(0, 1); // Base case: empty path has sum 0
+        return countPaths(root, 0, k, prefixSum);
+    }
+
+    private int countPaths(Node node, int currSum, int k, HashMap<Integer, Integer> prefixSum) {
+        if (node == null) return 0;
+
+        // Update current sum
+        currSum += node.data;
+
+        // Count the number of valid paths ending at this node
+        int count = prefixSum.getOrDefault(currSum - k, 0);
+
+        // Update prefixSum map
+        prefixSum.put(currSum, prefixSum.getOrDefault(currSum, 0) + 1);
+
+        // Recur for left and right children
+        count += countPaths(node.left, currSum, k, prefixSum);
+        count += countPaths(node.right, currSum, k, prefixSum);
+
+        // Backtrack: Remove the current sum from the map to prevent affecting other paths
+        prefixSum.put(currSum, prefixSum.get(currSum) - 1);
+
+        return count;
+    }
+}
