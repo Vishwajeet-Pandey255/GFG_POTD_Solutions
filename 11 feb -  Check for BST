@@ -1,0 +1,19 @@
+class Solution {
+    // Helper function to check BST property
+    boolean isBSTUtil(Node node, int min, int max) {
+        // Base case: empty tree is a BST
+        if (node == null) return true;
+        
+        // If node's value violates the min/max constraint, it's not a BST
+        if (node.data <= min || node.data >= max) return false;
+        
+        // Recursively check left and right subtrees with updated constraints
+        return isBSTUtil(node.left, min, node.data) &&
+               isBSTUtil(node.right, node.data, max);
+    }
+    
+    // Main function to check if a tree is BST
+    boolean isBST(Node root) {
+        return isBSTUtil(root, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+}
