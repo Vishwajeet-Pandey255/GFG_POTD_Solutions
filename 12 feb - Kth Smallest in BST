@@ -1,0 +1,89 @@
+class Solution {
+    // Return the Kth smallest element in the given BST
+    public int kthSmallest(Node root, int k) {
+        int[] result = new int[2]; // result[0] = count, result[1] = value
+        result[1] = -1; // Default value if k is out of range
+        inorderTraversal(root, k, result);
+        return result[1];
+    }
+    
+    private void inorderTraversal(Node root, int k, int[] result) {
+        if (root == null || result[0] >= k) {
+            return;
+        }
+        
+        inorderTraversal(root.left, k, result);
+        
+        result[0]++; // Increase count of visited nodes
+        if (result[0] == k) {
+            result[1] = root.data;
+            return;
+        }
+        
+        inorderTraversal(root.right, k, result);
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////DRY RUN CODE////////////////////////////////////////////////////////////////////////////////
+
+
+Step-by-Step Approach
+Use an array result[] to store:
+
+result[0]: A counter to track visited nodes.
+result[1]: The k-th smallest element (initialized as -1 for edge cases).
+Perform in-order traversal:
+
+Visit the left subtree.
+Increment the counter and check if it's the k-th node.
+Visit the right subtree.
+Stop Early:
+
+If we find the k-th smallest element, stop further recursion to optimize performance.
+Dry Run Example
+Let's take the BST:
+
+markdown
+Copy
+Edit
+        20
+       /  \
+      8    22
+     / \  
+    4   12
+       /  \
+      10   14
+and k = 3.
+
+In-order Traversal Order: [4, 8, 10, 12, 14, 20, 22]
+
+Expected Output: 10 (3rd smallest element).
+
+Step-by-Step Execution
+Step	Current Node	Visited Count (result[0])	k-th Smallest (result[1])
+Start	20	0	-1
+Go Left	8	0	-1
+Go Left	4	0	-1
+Process 4	4	1	-1
+Back to 8	8	2	-1
+Go Right	12	2	-1
+Go Left	10	2	-1
+Process 10	10	3	10 ✅
+Since we found the 3rd smallest element (10), we stop the traversal.
+
+Handling Edge Cases
+If k > total nodes, we return -1. Example:
+makefile
+
+Tree: [1]
+k = 2
+Output: -1
+If k = 1, return the smallest element (leftmost node).
+If k = total nodes, return the largest element (rightmost node).
+Time Complexity
+Best Case (Early Stop): 
+O(k)
+Worst Case (Full Traversal): 
+O(N)
+Conclusion
+This approach ensures an efficient search for the k-th smallest element in a BST, handling edge cases gracefully. 🚀
