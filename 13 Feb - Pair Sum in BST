@@ -1,0 +1,18 @@
+class Solution {
+    public boolean findTarget(Node root, int target) {
+        Set<Integer> set = new HashSet<>();
+        return findPair(root, target, set);
+    }
+
+    private boolean findPair(Node root, int target, Set<Integer> set) {
+        if (root == null) return false;
+        
+        if (set.contains(target - root.data)) {
+            return true;
+        }
+        
+        set.add(root.data);
+        
+        return findPair(root.left, target, set) || findPair(root.right, target, set);
+    }
+}
