@@ -1,0 +1,40 @@
+class Solution {
+    Node first, middle, last, prev;
+
+    void correctBST(Node root) {
+        first = middle = last = prev = null;
+        inorderTraversal(root);
+        
+        // Fix the swapped nodes
+        if (first != null && last != null) {
+            // Non-adjacent nodes are swapped
+            int temp = first.data;
+            first.data = last.data;
+            last.data = temp;
+        } else if (first != null && middle != null) {
+            // Adjacent nodes are swapped
+            int temp = first.data;
+            first.data = middle.data;
+            middle.data = temp;
+        }
+    }
+
+    void inorderTraversal(Node root) {
+        if (root == null) return;
+
+        inorderTraversal(root.left);
+        
+        // Detect swapped nodes
+        if (prev != null && root.data < prev.data) {
+            if (first == null) {
+                first = prev;
+                middle = root;
+            } else {
+                last = root;
+            }
+        }
+        
+        prev = root;
+        inorderTraversal(root.right);
+    }
+}
