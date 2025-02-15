@@ -1,0 +1,21 @@
+class Solution {
+    Node LCA(Node root, Node n1, Node n2) {
+        // Traverse the tree starting from the root
+        while (root != null) {
+            // If both n1 and n2 are smaller than root, move to the left subtree
+            if (n1.data < root.data && n2.data < root.data) {
+                root = root.left;
+            }
+            // If both n1 and n2 are greater than root, move to the right subtree
+            else if (n1.data > root.data && n2.data > root.data) {
+                root = root.right;
+            }
+            // If one of n1 or n2 is on one side and the other is on the other side,
+            // or if one of them is the root itself, then root is the LCA
+            else {
+                return root;
+            }
+        }
+        return null; // This line should not be reached if both n1 and n2 are present in the tree
+    }
+}
