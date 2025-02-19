@@ -1,0 +1,41 @@
+class Solution {
+    // Function to merge K sorted linked lists.
+    Node mergeKLists(List<Node> arr) {
+        if (arr == null || arr.size() == 0)
+            return null;
+        
+        // Min-heap to keep track of the smallest head among the lists.
+        PriorityQueue<Node> pq = new PriorityQueue<>(new Comparator<Node>() {
+            public int compare(Node a, Node b) {
+                return a.data - b.data;
+            }
+        });
+        
+        // Add the first node of each linked list to the priority queue.
+        for (Node node : arr) {
+            if (node != null) {
+                pq.add(node);
+            }
+        }
+        
+        // Dummy node to help simplify the merge process.
+        Node dummy = new Node(0);
+        Node tail = dummy;
+        
+        // Process until the queue is empty.
+        while (!pq.isEmpty()) {
+            // Get the node with the smallest value.
+            Node min = pq.poll();
+            tail.next = min;
+            tail = tail.next;
+            
+            // If there is a next node in the same list, add it to the queue.
+            if (min.next != null) {
+                pq.add(min.next);
+            }
+        }
+        
+        // The merged list starts from dummy.next.
+        return dummy.next;
+    }
+}
