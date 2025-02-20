@@ -1,0 +1,56 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<Double> getMedian(int[] arr) {
+        // Create two heaps
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder()); // Max heap for the lower half
+        PriorityQueue<Integer> minHeap = new PriorityQueue<>(); // Min heap for the upper half
+        ArrayList<Double> result = new ArrayList<>();
+        
+        for (int num : arr) {
+            // Add to the max heap first
+            maxHeap.add(num);
+            
+            // If the max heap is bigger than the min heap by more than one, move the top element to the min heap
+            if (maxHeap.size() > minHeap.size() + 1) {
+                minHeap.add(maxHeap.poll());
+            }
+            
+            // If the max heap root is greater than the min heap root, swap them
+            if (!minHeap.isEmpty() && maxHeap.peek() > minHeap.peek()) {
+                int maxTop = maxHeap.poll();
+                int minTop = minHeap.poll();
+                maxHeap.add(minTop);
+                minHeap.add(maxTop);
+            }
+            
+            // Calculate the median
+            if (maxHeap.size() > minHeap.size()) {
+                result.add((double) maxHeap.peek());
+            } else {
+                result.add((maxHeap.peek() + minHeap.peek()) / 2.0);
+            }
+        }
+        
+        return result;
+    }
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+The Thought Process Behind Using Heaps:
+Why Not Just Sort the Whole List?
+
+If we kept sorting the list after every new number, it would take O(n log n) time for each insertion (because sorting takes O(n log n)), which would be inefficient for large datasets.
+Why Two Heaps?
+
+By maintaining two heaps, we can insert a new number in O(log n) time and still efficiently keep track of the median.
+
+The max heap stores the smaller half of the numbers, and the min heap stores the larger half. We only need to look at the top element of both heaps to find the median.
+
+This structure allows us to:
+
+Efficiently add a new element.
+Rebalance the heaps when necessary.
+Quickly retrieve the median without sorting the entire list.
