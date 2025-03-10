@@ -1,0 +1,35 @@
+class Solution {
+    public int editDistance(String s1, String s2) {
+        int m = s1.length();
+        int n = s2.length();
+        
+        // Create a DP table
+        int[][] dp = new int[m + 1][n + 1];
+        
+        // Fill the DP table
+        for (int i = 0; i <= m; i++) {
+            for (int j = 0; j <= n; j++) {
+                // If first string is empty, we need to insert all characters of s2
+                if (i == 0) {
+                    dp[i][j] = j;
+                } 
+                // If second string is empty, we need to remove all characters of s1
+                else if (j == 0) {
+                    dp[i][j] = i;
+                } 
+                // If last characters are the same, ignore and recur for remaining substring
+                else if (s1.charAt(i - 1) == s2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } 
+                // If last characters are different, consider all possibilities
+                else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j],       // Remove
+                                     Math.min(dp[i][j - 1],    // Insert
+                                              dp[i - 1][j - 1])); // Replace
+                }
+            }
+        }
+        
+        return dp[m][n];
+    }
+}
