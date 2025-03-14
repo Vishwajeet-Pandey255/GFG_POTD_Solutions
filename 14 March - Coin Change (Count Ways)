@@ -1,0 +1,18 @@
+class Solution {
+    public int count(int coins[], int sum) {
+        int n = coins.length;
+        int dp[] = new int[sum + 1];
+        
+        // Base case: There is one way to get sum 0 (by choosing no coin)
+        dp[0] = 1;
+        
+        // Process each coin one by one
+        for (int coin : coins) {
+            for (int j = coin; j <= sum; j++) {
+                dp[j] += dp[j - coin];
+            }
+        }
+        
+        return dp[sum];
+    }
+}
