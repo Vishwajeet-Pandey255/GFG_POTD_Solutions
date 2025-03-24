@@ -1,0 +1,32 @@
+class Solution {
+    static int matrixMultiplication(int arr[]) {
+        int n = arr.length;
+        int dp[][] = new int[n][n];
+        
+        // Filling dp array with -1 initially
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j] = -1;
+            }
+        }
+        
+        return matrixChainMemoized(arr, 1, n - 1, dp);
+    }
+    
+    static int matrixChainMemoized(int arr[], int i, int j, int dp[][]) {
+        if (i >= j) return 0;
+        if (dp[i][j] != -1) return dp[i][j];
+        
+        int minCost = Integer.MAX_VALUE;
+        
+        for (int k = i; k < j; k++) {
+            int cost = matrixChainMemoized(arr, i, k, dp) +
+                       matrixChainMemoized(arr, k + 1, j, dp) +
+                       arr[i - 1] * arr[k] * arr[j];
+            
+            minCost = Math.min(minCost, cost);
+        }
+        
+        return dp[i][j] = minCost;
+    }
+}
