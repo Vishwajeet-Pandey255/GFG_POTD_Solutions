@@ -1,0 +1,31 @@
+class Solution {
+    // Function to find the minimum number of platforms required at the railway station
+    static int findPlatform(int arr[], int dep[]) {
+        int n = arr.length;
+        
+        // Sort arrival and departure arrays
+        Arrays.sort(arr);
+        Arrays.sort(dep);
+        
+        int platformsRequired = 1, maxPlatforms = 1;
+        int i = 1, j = 0;
+        
+        // Traverse through all trains
+        while (i < n && j < n) {
+            if (arr[i] <= dep[j]) {
+                // A train is arriving before or at the same time as another train departs
+                platformsRequired++;
+                i++;
+            } else {
+                // A train departs before the next train arrives
+                platformsRequired--;
+                j++;
+            }
+            
+            // Update maximum platforms needed
+            maxPlatforms = Math.max(maxPlatforms, platformsRequired);
+        }
+        
+        return maxPlatforms;
+    }
+}
