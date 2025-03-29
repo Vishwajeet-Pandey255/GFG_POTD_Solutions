@@ -1,0 +1,47 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<Integer> jobSequencing(int[] deadline, int[] profit) {
+        int n = deadline.length;
+        List<Job> jobs = new ArrayList<>();
+        
+        // Store jobs as objects
+        for (int i = 0; i < n; i++) {
+            jobs.add(new Job(deadline[i], profit[i]));
+        }
+        
+        // Sort jobs in descending order of profit
+        jobs.sort((a, b) -> b.profit - a.profit);
+        
+        // Find the maximum deadline
+        int maxDeadline = Arrays.stream(deadline).max().orElse(0);
+        
+        // Create a slot array to keep track of free slots
+        boolean[] slot = new boolean[maxDeadline + 1];
+        
+        int countJobs = 0, totalProfit = 0;
+        
+        for (Job job : jobs) {
+            // Find a free slot from min(deadline, maxDeadline) to 1
+            for (int j = Math.min(job.deadline, maxDeadline); j > 0; j--) {
+                if (!slot[j]) {
+                    slot[j] = true; // Mark slot as occupied
+                    countJobs++;
+                    totalProfit += job.profit;
+                    break;
+                }
+            }
+        }
+        
+        return new ArrayList<>(Arrays.asList(countJobs, totalProfit));
+    }
+}
+
+class Job {
+    int deadline, profit;
+    
+    Job(int deadline, int profit) {
+        this.deadline = deadline;
+        this.profit = profit;
+    }
+}
