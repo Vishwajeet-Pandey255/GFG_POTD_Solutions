@@ -1,0 +1,52 @@
+class Solution {
+    // Function to find the parent of a node with path compression
+    private int find(int[] parent, int node) {
+        if (parent[node] != node) {
+            parent[node] = find(parent, parent[node]); // Path compression
+        }
+        return parent[node];
+    }
+
+    // Function to union two subsets
+    private boolean union(int[] parent, int[] rank, int u, int v) {
+        int pu = find(parent, u);
+        int pv = find(parent, v);
+
+        if (pu == pv) return true; // Cycle detected
+
+        // Union by rank
+        if (rank[pu] < rank[pv]) {
+            parent[pu] = pv;
+        } else if (rank[pv] < rank[pu]) {
+            parent[pv] = pu;
+        } else {
+            parent[pu] = pv;
+            rank[pv]++;
+        }
+
+        return false;
+    }
+
+    public boolean isCycle(int V, int[][] edges) {
+        int[] parent = new int[V];
+        int[] rank = new int[V];
+
+        // Initialize parent and rank
+        for (int i = 0; i < V; i++) {
+            parent[i] = i;
+            rank[i] = 0;
+        }
+
+        // Process all edges
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            if (union(parent, rank, u, v)) {
+                return true; // If union returns true, cycle is detected
+            }
+        }
+
+        return false; // No cycle found
+    }
+}
