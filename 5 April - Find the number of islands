@@ -1,0 +1,40 @@
+class Solution {
+    public int countIslands(char[][] grid) {
+        if (grid == null || grid.length == 0) return 0;
+
+        int n = grid.length;
+        int m = grid[0].length;
+        boolean[][] visited = new boolean[n][m];
+        int count = 0;
+
+        // Traverse the entire grid
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                // If the cell is land and not visited, it's a new island
+                if (grid[i][j] == 'L' && !visited[i][j]) {
+                    dfs(grid, visited, i, j, n, m);
+                    count++; // Increment island count
+                }
+            }
+        }
+
+        return count;
+    }
+
+    // DFS to mark all connected 'L's as visited
+    private void dfs(char[][] grid, boolean[][] visited, int i, int j, int n, int m) {
+        // Check for boundary and if already visited or water
+        if (i < 0 || j < 0 || i >= n || j >= m || grid[i][j] != 'L' || visited[i][j])
+            return;
+
+        visited[i][j] = true;
+
+        // All 8 directions (horizontal, vertical, diagonal)
+        int[] rowDir = {-1, -1, -1, 0, 0, 1, 1, 1};
+        int[] colDir = {-1, 0, 1, -1, 1, -1, 0, 1};
+
+        for (int d = 0; d < 8; d++) {
+            dfs(grid, visited, i + rowDir[d], j + colDir[d], n, m);
+        }
+    }
+}
