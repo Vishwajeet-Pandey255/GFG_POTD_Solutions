@@ -1,0 +1,52 @@
+import java.util.*;
+
+class Solution {
+    public static ArrayList<Integer> topoSort(int V, int[][] edges) {
+        ArrayList<Integer> result = new ArrayList<>();
+        
+        // Step 1: Build adjacency list
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for(int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+        for(int[] edge : edges) {
+            adj.get(edge[0]).add(edge[1]);  // u -> v
+        }
+
+        // Step 2: Compute in-degree of each node
+        int[] indegree = new int[V];
+        for(int i = 0; i < V; i++) {
+            for(int neighbor : adj.get(i)) {
+                indegree[neighbor]++;
+            }
+        }
+
+        // Step 3: Add all vertices with in-degree 0 to the queue
+        Queue<Integer> q = new LinkedList<>();
+        for(int i = 0; i < V; i++) {
+            if(indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        // Step 4: Process the queue
+        while(!q.isEmpty()) {
+            int node = q.poll();
+            result.add(node);
+            
+            for(int neighbor : adj.get(node)) {
+                indegree[neighbor]--;
+                if(indegree[neighbor] == 0) {
+                    q.add(neighbor);
+                }
+            }
+        }
+
+        // If result size != V, graph had a cycle (invalid input for topological sort)
+        if(result.size() != V) {
+            return new ArrayList<>(); // return empty list
+        }
+
+        return result;
+    }
+}
