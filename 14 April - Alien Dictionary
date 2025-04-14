@@ -1,0 +1,62 @@
+import java.util.*;
+
+class Solution {
+    public String findOrder(String[] words) {
+        // Step 1: Initialize graph and in-degree map
+        Map<Character, List<Character>> graph = new HashMap<>();
+        Map<Character, Integer> inDegree = new HashMap<>();
+
+        // Step 2: Initialize in-degree for all unique characters
+        for (String word : words) {
+            for (char c : word.toCharArray()) {
+                graph.putIfAbsent(c, new ArrayList<>());
+                inDegree.putIfAbsent(c, 0);
+            }
+        }
+
+        // Step 3: Build the graph from adjacent words
+        for (int i = 0; i < words.length - 1; i++) {
+            String word1 = words[i];
+            String word2 = words[i + 1];
+
+            // Invalid case: prefix issue (e.g., "abc", "ab")
+            if (word1.length() > word2.length() && word1.startsWith(word2)) {
+                return "";
+            }
+
+            for (int j = 0; j < Math.min(word1.length(), word2.length()); j++) {
+                char parent = word1.charAt(j);
+                char child = word2.charAt(j);
+                if (parent != child) {
+                    graph.get(parent).add(child);
+                    inDegree.put(child, inDegree.get(child) + 1);
+                    break;
+                }
+            }
+        }
+
+        // Step 4: Topological sort using Kahn's Algorithm
+        Queue<Character> queue = new LinkedList<>();
+        for (char c : inDegree.keySet()) {
+            if (inDegree.get(c) == 0) {
+                queue.offer(c);
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (!queue.isEmpty()) {
+            char curr = queue.poll();
+            sb.append(curr);
+
+            for (char neighbor : graph.get(curr)) {
+                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+                if (inDegree.get(neighbor) == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        // If all characters are included, return the result
+        return sb.length() == inDegree.size() ? sb.toString() : "";
+    }
+}
