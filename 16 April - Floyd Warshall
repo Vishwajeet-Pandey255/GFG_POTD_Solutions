@@ -1,0 +1,20 @@
+class Solution {
+    public void floydWarshall(int[][] dist) {
+        int n = dist.length;
+        // INF is set to 100000000 as given in problem statement
+        int INF = 100000000;
+        
+        for (int k = 0; k < n; k++) {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    // Always perform update: even if one or both values equal INF,
+                    // adding a negative weight may yield a smaller valid path.
+                    int candidate = dist[i][k] + dist[k][j];
+                    if (candidate < dist[i][j]) {
+                        dist[i][j] = candidate;
+                    }
+                }
+            }
+        }
+    }
+}
