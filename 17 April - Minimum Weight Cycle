@@ -1,0 +1,73 @@
+class Solution {
+    static class Edge {
+        int to, weight;
+        Edge(int to, int weight) {
+            this.to = to;
+            this.weight = weight;
+        }
+    }
+
+    public int findMinCycle(int V, int[][] edges) {
+        final int INF = Integer.MAX_VALUE / 2;
+        int E = edges.length;
+
+        // Build adjacency list
+        List<Edge>[] graph = new ArrayList[V];
+        for (int i = 0; i < V; i++) {
+            graph[i] = new ArrayList<>();
+        }
+        for (int[] e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+            graph[u].add(new Edge(v, w));
+            graph[v].add(new Edge(u, w));
+        }
+
+        int minCycle = INF;
+        // Try banning each edge in turn
+        for (int[] e : edges) {
+            int u = e[0], v = e[1], w = e[2];
+            int d = shortestPathExcludingEdge(u, v, w, graph, V, INF);
+            if (d < INF) {
+                minCycle = Math.min(minCycle, d + w);
+            }
+        }
+
+        return (minCycle == INF ? -1 : minCycle);
+    }
+
+    // Dijkstra from src to dest, but skip exactly the edge (banU <-> banV with weight banW)
+    private int shortestPathExcludingEdge(int src, int dest, int banW,
+                                          List<Edge>[] graph, int V, int INF) {
+        int[] dist = new int[V];
+        boolean[] seen = new boolean[V];
+        Arrays.fill(dist, INF);
+        dist[src] = 0;
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a[1]));
+        pq.offer(new int[]{src, 0});
+
+        while (!pq.isEmpty()) {
+            int[] cur = pq.poll();
+            int u = cur[0], dU = cur[1];
+            if (seen[u]) continue;
+            seen[u] = true;
+            if (u == dest) break;
+
+            for (Edge e : graph[u]) {
+                int v = e.to, w = e.weight;
+                // Ban the edge in both directions
+                if ((u == src && v == dest && w == banW) ||
+                    (u == dest && v == src && w == banW)) {
+                    continue;
+                }
+                int nd = dU + w;
+                if (nd < dist[v]) {
+                    dist[v] = nd;
+                    pq.offer(new int[]{v, nd});
+                }
+            }
+        }
+
+        return dist[dest];
+    }
+}
