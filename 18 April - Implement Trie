@@ -1,0 +1,54 @@
+// User function Template for Java
+class Trie {
+    // Inner node class
+    private static class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        boolean isEndOfWord;
+    }
+    
+    private final TrieNode root;
+    
+    public Trie() {
+        // Initialize your Trie with an empty root node
+        root = new TrieNode();
+    }
+
+    // Insert a word into the Trie
+    public void insert(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            int idx = c - 'a';
+            if (node.children[idx] == null) {
+                node.children[idx] = new TrieNode();
+            }
+            node = node.children[idx];
+        }
+        node.isEndOfWord = true;
+    }
+
+    // Search for a whole word in the Trie
+    public boolean search(String word) {
+        TrieNode node = root;
+        for (char c : word.toCharArray()) {
+            int idx = c - 'a';
+            if (node.children[idx] == null) {
+                return false;
+            }
+            node = node.children[idx];
+        }
+        return node.isEndOfWord;
+    }
+
+    // Check if there is any word in the Trie that starts with the given prefix
+    public boolean isPrefix(String prefix) {
+        TrieNode node = root;
+        for (char c : prefix.toCharArray()) {
+            int idx = c - 'a';
+            if (node.children[idx] == null) {
+                return false;
+            }
+            node = node.children[idx];
+        }
+        return true;
+    }
+}
