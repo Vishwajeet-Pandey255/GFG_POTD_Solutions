@@ -1,0 +1,32 @@
+class Solution {
+    public int maxXor(int[] arr) {
+        int max = 0;    // holds the maximum XOR found so far
+        int mask = 0;   // mask to extract prefixes up to the current bit
+
+        // iterate from the highest bit (31) down to 0
+        for (int i = 31; i >= 0; i--) {
+            // include this bit in the mask
+            mask |= (1 << i);
+
+            // collect all prefixes of numbers masked up to bit i
+            Set<Integer> prefixes = new HashSet<>();
+            for (int num : arr) {
+                prefixes.add(num & mask);
+            }
+
+            // candidate for maximum XOR with the i-th bit set
+            int candidate = max | (1 << i);
+
+            // check if there are two prefixes that can achieve this candidate XOR
+            for (int p : prefixes) {
+                if (prefixes.contains(p ^ candidate)) {
+                    // if so, lock in this bit in max
+                    max = candidate;
+                    break;
+                }
+            }
+        }
+
+        return max;
+    }
+}
