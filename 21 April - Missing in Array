@@ -1,0 +1,19 @@
+class Solution {
+    int missingNum(int arr[]) {
+        int n = arr.length + 1;
+        int xorAll = 0;
+        
+        // XOR 1 through n
+        for (int i = 1; i <= n; i++) {
+            xorAll ^= i;
+        }
+        
+        // XOR with every element in the array
+        for (int num : arr) {
+            xorAll ^= num;
+        }
+        
+        // what remains is the missing number
+        return xorAll;
+    }
+}
