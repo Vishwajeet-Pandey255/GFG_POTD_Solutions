@@ -1,0 +1,30 @@
+class Solution {
+    public int[] singleNum(int[] arr) {
+        // Step 1: XOR all elements to get XOR of the two unique numbers
+        int xor = 0;
+        for (int num : arr) {
+            xor ^= num;
+        }
+
+        // Step 2: Find rightmost set bit (i.e., the bit where the two numbers differ)
+        int diffBit = xor & -xor;
+
+        // Step 3: Divide numbers into two groups and XOR separately
+        int num1 = 0, num2 = 0;
+        for (int num : arr) {
+            if ((num & diffBit) != 0)
+                num1 ^= num;
+            else
+                num2 ^= num;
+        }
+
+        // Step 4: Return them in increasing order
+        int[] result = new int[]{num1, num2};
+        if (result[0] > result[1]) {
+            int temp = result[0];
+            result[0] = result[1];
+            result[1] = temp;
+        }
+        return result;
+    }
+}
