@@ -1,0 +1,69 @@
+import java.util.*;
+
+class Solution {
+
+    static final int MAX = 20000;
+    static List<Integer> primes = new ArrayList<>();
+
+    // Precompute primes using sieve
+    static {
+        boolean[] isPrime = new boolean[MAX + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = isPrime[1] = false;
+
+        for (int i = 2; i * i <= MAX; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= MAX; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        for (int i = 2; i <= MAX; i++) {
+            if (isPrime[i]) {
+                primes.add(i);
+            }
+        }
+    }
+
+    Node primeList(Node head) {
+        Node temp = head;
+
+        while (temp != null) {
+            temp.val = findNearestPrime(temp.val);
+            temp = temp.next;
+        }
+
+        return head;
+    }
+
+    // Find the nearest prime to the given number
+    int findNearestPrime(int num) {
+        int left = 0, right = primes.size() - 1;
+        int closest = primes.get(0);
+
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int midVal = primes.get(mid);
+
+            if (midVal == num) {
+                return num;
+            } else if (midVal < num) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        // After binary search, find the closest among primes.get(left) and primes.get(right)
+        int candidate1 = left < primes.size() ? primes.get(left) : Integer.MAX_VALUE;
+        int candidate2 = right >= 0 ? primes.get(right) : Integer.MAX_VALUE;
+
+        int diff1 = Math.abs(candidate1 - num);
+        int diff2 = Math.abs(candidate2 - num);
+
+        if (diff1 < diff2) return candidate1;
+        else if (diff2 < diff1) return candidate2;
+        else return Math.min(candidate1, candidate2);
+    }
+}
