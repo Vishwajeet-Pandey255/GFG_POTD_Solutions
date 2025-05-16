@@ -1,0 +1,54 @@
+class Solution {
+    static class Element implements Comparable<Element> {
+        int value;  
+        int row;    
+        int idx;    
+
+        Element(int value, int row, int idx) {
+            this.value = value;
+            this.row = row;
+            this.idx = idx;
+        }
+
+        public int compareTo(Element other) {
+            return this.value - other.value;
+        }
+    }
+
+    public ArrayList<Integer> findSmallestRange(int[][] arr) {
+        int k = arr.length;
+        int n = arr[0].length;
+
+        PriorityQueue<Element> minHeap = new PriorityQueue<>();
+        int maxVal = Integer.MIN_VALUE;
+        int start = 0, end = Integer.MAX_VALUE;
+
+        for (int i = 0; i < k; i++) {
+            minHeap.add(new Element(arr[i][0], i, 0));
+            maxVal = Math.max(maxVal, arr[i][0]);
+        }
+
+        while (true) {
+            Element curr = minHeap.poll();
+            int minVal = curr.value;
+
+            if (maxVal - minVal < end - start) {
+                start = minVal;
+                end = maxVal;
+            }
+
+            if (curr.idx + 1 < n) {
+                int nextVal = arr[curr.row][curr.idx + 1];
+                minHeap.add(new Element(nextVal, curr.row, curr.idx + 1));
+                maxVal = Math.max(maxVal, nextVal);
+            } else {
+                break;
+            }
+        }
+
+        ArrayList<Integer> result = new ArrayList<>();
+        result.add(start);
+        result.add(end);
+        return result;
+    }
+}
