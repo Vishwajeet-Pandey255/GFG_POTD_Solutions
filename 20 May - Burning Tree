@@ -1,0 +1,92 @@
+
+/*
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+class Solution {
+    
+    // Map to track parent of each node
+    private static void markParents(Node root, Map<Node, Node> parentMap, Node targetWrapper[]) {
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(root);
+        while (!queue.isEmpty()) {
+            Node curr = queue.poll();
+            if (curr.data == targetWrapper[0].data) {
+                targetWrapper[0] = curr;
+            }
+            if (curr.left != null) {
+                parentMap.put(curr.left, curr);
+                queue.offer(curr.left);
+            }
+            if (curr.right != null) {
+                parentMap.put(curr.right, curr);
+                queue.offer(curr.right);
+            }
+        }
+    }
+    
+    public static int minTime(Node root, int target) {
+        if (root == null) return 0;
+
+        // Step 1: Create map of child -> parent
+        Map<Node, Node> parentMap = new HashMap<>();
+        
+        // Wrap the target node for mutable reference
+        Node[] targetWrapper = new Node[1];
+        targetWrapper[0] = new Node(target); // temporary node with only data
+        
+        markParents(root, parentMap, targetWrapper);
+        Node targetNode = targetWrapper[0];
+
+        // Step 2: BFS to simulate fire
+        Queue<Node> queue = new LinkedList<>();
+        Set<Node> visited = new HashSet<>();
+        
+        queue.offer(targetNode);
+        visited.add(targetNode);
+        int time = 0;
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            boolean burnedAny = false;
+
+            for (int i = 0; i < size; i++) {
+                Node current = queue.poll();
+                
+                if (current.left != null && !visited.contains(current.left)) {
+                    visited.add(current.left);
+                    queue.offer(current.left);
+                    burnedAny = true;
+                }
+
+                if (current.right != null && !visited.contains(current.right)) {
+                    visited.add(current.right);
+                    queue.offer(current.right);
+                    burnedAny = true;
+                }
+
+                if (parentMap.containsKey(current) && !visited.contains(parentMap.get(current))) {
+                    visited.add(parentMap.get(current));
+                    queue.offer(parentMap.get(current));
+                    burnedAny = true;
+                }
+            }
+
+            if (burnedAny) {
+                time++;
+            }
+        }
+
+        return time;
+    }
+}
