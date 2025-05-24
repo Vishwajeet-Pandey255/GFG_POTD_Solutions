@@ -1,0 +1,18 @@
+class Solution {
+    public static int sumSubstrings(String s) {
+        int n = s.length();
+        long result = 0;    // will hold the total sum
+        long prev = 0;      // sum of all substrings ending at the previous position
+
+        for (int i = 0; i < n; i++) {
+            int digit = s.charAt(i) - '0';
+            // build the sum of substrings ending here:
+            //   take all previous substrings ending at i-1, shift them left (×10),
+            //   and add (i+1) new single-digit contributions
+            prev = prev * 10 + (long) digit * (i + 1);
+            result += prev;
+        }
+
+        return (int) result;
+    }
+}
