@@ -1,0 +1,45 @@
+import java.util.*;
+
+class Solution {
+    boolean pythagoreanTriplet(int[] arr) {
+        int n = arr.length;
+        int MAXV = 1000;
+        int[] freq = new int[MAXV + 1];
+        for (int v : arr) {
+            freq[v]++;
+        }
+        
+        List<Integer> vals = new ArrayList<>();
+        for (int v = 1; v <= MAXV; v++) {
+            if (freq[v] > 0) vals.add(v);
+        }
+        
+       
+        int MAXS = MAXV * MAXV;
+        boolean[] presentSquare = new boolean[MAXS + 1];
+        for (int v : vals) {
+            presentSquare[v * v] = true;
+        }
+        
+        // 4) try every pair (v1, v2) with v1 ≤ v2
+        int sz = vals.size();
+        for (int i = 0; i < sz; i++) {
+            int v1 = vals.get(i);
+            int s1 = v1 * v1;
+            for (int j = i; j < sz; j++) {
+                int v2 = vals.get(j);
+                int s2 = v2 * v2;
+                int sum = s1 + s2;
+                if (sum > MAXS || !presentSquare[sum]) 
+                    continue;
+                
+                if (i < j || freq[v1] > 1) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
+
