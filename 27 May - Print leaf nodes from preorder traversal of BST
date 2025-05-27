@@ -1,0 +1,34 @@
+class Solution {
+    private ArrayList<Integer> leaves;
+    private int idx, n;
+    private int[] pre;
+
+    public ArrayList<Integer> leafNodes(int[] preorder) {
+        leaves = new ArrayList<>();
+        pre = preorder;
+        n = pre.length;
+        idx = 0;
+
+        helper(Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return leaves;
+    }
+
+    
+    
+    private boolean helper(int min, int max) {
+        if (idx == n || pre[idx] < min || pre[idx] > max) {
+            return false;
+        }
+
+        int val = pre[idx++];
+
+        boolean hasLeft  = helper(min, val);
+        boolean hasRight = helper(val, max);
+
+        if (!hasLeft && !hasRight) {
+            leaves.add(val);
+        }
+
+        return true;
+    }
+}
