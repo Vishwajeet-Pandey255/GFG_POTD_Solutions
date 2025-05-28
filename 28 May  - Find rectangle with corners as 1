@@ -1,0 +1,19 @@
+class Solution {
+    public boolean ValidCorner(int mat[][]) {
+        int n = mat.length;
+        if (n == 0) return false;
+        int m = mat[0].length;
+        for (int r1 = 0; r1 < n - 1; r1++) {
+            for (int r2 = r1 + 1; r2 < n; r2++) {
+                int count = 0;
+                for (int c = 0; c < m; c++) {
+                    if (mat[r1][c] == 1 && mat[r2][c] == 1) {
+                        count++;
+                        if (count == 2) return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
