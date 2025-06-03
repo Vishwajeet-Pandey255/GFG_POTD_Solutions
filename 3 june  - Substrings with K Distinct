@@ -1,0 +1,53 @@
+class Solution {
+
+    private long countAtMostK(String s, int k) {
+        int n = s.length();
+        int[] freq = new int[26];
+        int distinct = 0;
+        long count = 0;
+        int left = 0;
+
+        for (int right = 0; right < n; right++) {
+            int idxR = s.charAt(right) - 'a';
+            if (freq[idxR] == 0) {
+                distinct++;
+            }
+            freq[idxR]++;
+
+            while (distinct > k) {
+                int idxL = s.charAt(left) - 'a';
+                freq[idxL]--;
+                if (freq[idxL] == 0) {
+                    distinct--;
+                }
+                left++;
+            }
+
+            count += (right - left + 1);
+        }
+
+        return count;
+    }
+
+    long countSubstr(String s, int k) {
+        if (k == 0) return 0;
+       
+        return countAtMostK(s, k) - countAtMostK(s, k - 1);
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+
+        String s1 = "abc";
+        int k1 = 2;
+        System.out.println(sol.countSubstr(s1, k1)); // Output: 2
+
+        String s2 = "aba";
+        int k2 = 2;
+        System.out.println(sol.countSubstr(s2, k2)); // Output: 3
+
+        String s3 = "aa";
+        int k3 = 1;
+        System.out.println(sol.countSubstr(s3, k3)); // Output: 3
+    }
+}
