@@ -1,0 +1,47 @@
+import java.util.ArrayList;
+
+class Solution {
+    ArrayList<Integer> search(String pat, String txt) {
+        ArrayList<Integer> result = new ArrayList<>();
+        int n = txt.length();
+        int m = pat.length();
+        if (m > n) return result;
+
+        long mod = 1_000_000_007;
+        long base = 256;
+
+        long power = 1;
+        for (int i = 0; i < m - 1; i++) {
+            power = (power * base) % mod;
+        }
+
+        long hashPat = 0;
+        long hashTxt = 0;
+        for (int i = 0; i < m; i++) {
+            hashPat = (hashPat * base + pat.charAt(i)) % mod;
+            hashTxt = (hashTxt * base + txt.charAt(i)) % mod;
+        }
+
+        for (int i = 0; i <= n - m; i++) {
+            if (hashPat == hashTxt) {
+                boolean match = true;
+                for (int j = 0; j < m; j++) {
+                    if (txt.charAt(i + j) != pat.charAt(j)) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match) {
+                    result.add(i + 1);
+                }
+            }
+            if (i < n - m) {
+                long leftChar = (txt.charAt(i) * power) % mod;
+                hashTxt = (hashTxt - leftChar + mod) % mod; 
+                hashTxt = (hashTxt * base + txt.charAt(i + m)) % mod; 
+            }
+        }
+
+        return result;
+    }
+}
