@@ -1,0 +1,24 @@
+import java.util.*;
+
+class Solution {
+    int countStrings(String s) {
+        int n = s.length();
+        long totalSwaps = (long)n * (n - 1) / 2;
+
+        long identicalSwaps = 0;
+        int[] freq = new int[26];
+        for (char c : s.toCharArray()) {
+            freq[c - 'a']++;
+        }
+        for (int f : freq) {
+            if (f > 1) {
+                identicalSwaps += (long)f * (f - 1) / 2;
+            }
+        }
+
+        long distinctNew = totalSwaps - identicalSwaps;
+        long result = distinctNew + (identicalSwaps > 0 ? 1 : 0);
+
+        return (int)result;
+    }
+}
