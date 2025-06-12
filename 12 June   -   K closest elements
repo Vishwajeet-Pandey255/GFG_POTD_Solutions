@@ -1,0 +1,34 @@
+import java.util.*;
+
+class Solution {
+    int[] printKClosest(int[] arr, int k, int x) {
+        PriorityQueue<int[]> maxHeap = new PriorityQueue<>(
+            (a, b) -> {
+                if (a[0] != b[0]) return b[0] - a[0];  
+                return a[1] - b[1];                   
+            });
+
+        for (int num : arr) {
+            if (num == x) continue;  
+            int diff = Math.abs(num - x);
+            maxHeap.offer(new int[]{diff, num});
+
+            if (maxHeap.size() > k) {
+                maxHeap.poll();  
+            }
+        }
+
+        List<int[]> list = new ArrayList<>(maxHeap);
+        list.sort((a, b) -> {
+            if (a[0] != b[0]) return a[0] - b[0]; 
+            return b[1] - a[1];         
+        });
+
+        int[] result = new int[k];
+        for (int i = 0; i < k; i++) {
+            result[i] = list.get(i)[1];
+        }
+
+        return result;
+    }
+}
