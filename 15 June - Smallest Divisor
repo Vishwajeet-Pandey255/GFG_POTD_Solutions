@@ -1,0 +1,36 @@
+class Solution {
+    public int smallestDivisor(int[] arr, int k) {
+        int left = 1;
+        int right = getMax(arr);
+        int answer = -1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (isValid(arr, k, mid)) {
+                answer = mid;
+                right = mid - 1;  
+            } else {
+                left = mid + 1;  
+            }
+        }
+
+        return answer;
+    }
+
+    private int getMax(int[] arr) {
+        int max = Integer.MIN_VALUE;
+        for (int num : arr) {
+            max = Math.max(max, num);
+        }
+        return max;
+    }
+
+    private boolean isValid(int[] arr, int k, int divisor) {
+        int sum = 0;
+        for (int num : arr) {
+            sum += (num + divisor - 1) / divisor; 
+            if (sum > k) return false; 
+        }
+        return true;
+    }
+}
