@@ -1,0 +1,35 @@
+import java.util.Arrays;
+
+class Solution {
+    public int minimumCoins(int[] arr, int k) {
+        int n = arr.length;
+        Arrays.sort(arr);
+
+        long[] prefix = new long[n+1];
+        for (int i = 0; i < n; i++) {
+            prefix[i+1] = prefix[i] + arr[i];
+        }
+
+        long totalSum = prefix[n];
+        long ans = totalSum;  // worst case: remove all coins
+
+        int r = 0;
+        for (int l = 0; l < n; l++) {
+            while (r < n && arr[r] <= arr[l] + k) {
+                r++;
+            }
+
+            long costLeft = prefix[l];
+
+           
+            long keptHeight = arr[l] + k;
+            long sumRight = prefix[n] - prefix[r];
+            long costRight = sumRight - (long)(n - r) * keptHeight;
+
+            ans = Math.min(ans, costLeft + costRight);
+            
+        }
+
+        return (int)ans;
+    }
+}
