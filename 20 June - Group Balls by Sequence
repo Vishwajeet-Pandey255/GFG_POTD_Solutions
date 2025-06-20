@@ -1,0 +1,29 @@
+import java.util.*;
+
+class Solution {
+    public boolean validgroup(int[] arr, int k) {
+        if (arr.length % k != 0) return false;
+
+        TreeMap<Integer, Integer> countMap = new TreeMap<>();
+
+        for (int num : arr) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+
+        for (int num : countMap.keySet()) {
+            int freq = countMap.get(num);
+            if (freq > 0) {
+                for (int i = 1; i < k; i++) {
+                    int nextNum = num + i;
+                    if (!countMap.containsKey(nextNum) || countMap.get(nextNum) < freq) {
+                        return false;
+                    }
+                    countMap.put(nextNum, countMap.get(nextNum) - freq);
+                }
+                countMap.put(num, 0);
+            }
+        }
+
+        return true;
+    }
+}
