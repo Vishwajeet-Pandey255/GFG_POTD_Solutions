@@ -1,0 +1,39 @@
+import java.util.*;
+
+class Solution {
+    public int catchThieves(char[] arr, int k) {
+        int n = arr.length;
+        int count = 0;
+
+        Queue<Integer> police = new LinkedList<>();
+        Queue<Integer> thief = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == 'P') {
+                police.add(i);
+            } else if (arr[i] == 'T') {
+                thief.add(i);
+            }
+
+            // Try to match police and thief from front of queues
+            while (!police.isEmpty() && !thief.isEmpty()) {
+                int pol = police.peek();
+                int thf = thief.peek();
+
+                if (Math.abs(pol - thf) <= k) {
+                    // Valid catch
+                    count++;
+                    police.poll();
+                    thief.poll();
+                } else if (thf < pol) {
+                    // Thief too far left, remove
+                    thief.poll();
+                } else {
+                    // Police too far left, remove
+                    police.poll();
+                }
+            }
+        }
+        return count;
+    }
+}
