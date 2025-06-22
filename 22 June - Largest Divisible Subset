@@ -1,0 +1,61 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<Integer> largestSubset(int[] arr) {
+        int n = arr.length;
+        Arrays.sort(arr);
+        
+        // dp[i]: length of largest divisible subset ending at i
+        int[] dp = new int[n];
+        // subset[i]: the actual subset (as a List) ending at i
+        @SuppressWarnings("unchecked")
+        List<Integer>[] subset = new List[n];
+        
+        int maxLen = 0, bestIdx = 0;
+        
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+            // start with the singleton subset [arr[i]]
+            subset[i] = new ArrayList<>();
+            subset[i].add(arr[i]);
+            
+            for (int j = 0; j < i; j++) {
+                if (arr[i] % arr[j] == 0) {
+                    int candidateLen = dp[j] + 1;
+                    if (candidateLen > dp[i]) {
+                        // strictly longer chain found
+                        dp[i] = candidateLen;
+                        subset[i] = new ArrayList<>(subset[j]);
+                        subset[i].add(arr[i]);
+                    }
+                    else if (candidateLen == dp[i]) {
+                        // same length—compare lexicographically
+                        List<Integer> cand = new ArrayList<>(subset[j]);
+                        cand.add(arr[i]);
+                        if (lexCompare(cand, subset[i]) > 0) {
+                            subset[i] = cand;
+                        }
+                    }
+                }
+            }
+            
+            // update global best by length, then by lex order if tie
+            if (dp[i] > maxLen || (dp[i] == maxLen && lexCompare(subset[i], subset[bestIdx]) > 0)) {
+                maxLen = dp[i];
+                bestIdx = i;
+            }
+        }
+        
+        // return as ArrayList<Integer>
+        return new ArrayList<>(subset[bestIdx]);
+    }
+    
+    // compare two equally-sized sorted lists lexicographically
+    private int lexCompare(List<Integer> a, List<Integer> b) {
+        for (int i = 0; i < a.size(); i++) {
+            int diff = a.get(i) - b.get(i);
+            if (diff != 0) return diff;
+        }
+        return 0;
+    }
+}
