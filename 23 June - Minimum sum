@@ -1,0 +1,39 @@
+class Solution {
+    String minSum(int[] arr) {
+        int n = arr.length;
+        // 1) Counting sort on digits 0–9
+        int[] count = new int[10];
+        for (int d : arr) count[d]++;
+        
+        // 2) Build the two numbers by distributing digits alternately
+        StringBuilder num1 = new StringBuilder(n/2 + 1);
+        StringBuilder num2 = new StringBuilder(n/2 + 1);
+        boolean turn = false;  // false → num1, true → num2
+        for (int d = 0; d <= 9; d++) {
+            for (int k = 0; k < count[d]; k++) {
+                if (!turn) num1.append((char)('0' + d));
+                else        num2.append((char)('0' + d));
+                turn = !turn;
+            }
+        }
+        
+        // 3) Manual addition of the two decimal‐strings
+        int i = num1.length() - 1, j = num2.length() - 1, carry = 0;
+        StringBuilder sum = new StringBuilder(Math.max(num1.length(), num2.length()) + 1);
+        while (i >= 0 || j >= 0 || carry != 0) {
+            int x = i >= 0 ? num1.charAt(i--) - '0' : 0;
+            int y = j >= 0 ? num2.charAt(j--) - '0' : 0;
+            int s = x + y + carry;
+            sum.append((char)('0' + (s % 10)));
+            carry = s / 10;
+        }
+        
+        // 4) Reverse and strip any leading zeros (but leave at least one digit)
+        sum.reverse();
+        int p = 0;
+        while (p + 1 < sum.length() && sum.charAt(p) == '0') p++;
+        if (p > 0) sum.delete(0, p);
+        
+        return sum.toString();
+    }
+}
