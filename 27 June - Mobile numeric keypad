@@ -1,0 +1,47 @@
+class Solution {
+    public int getCount(int n) {
+        if (n <= 0) return 0;
+        if (n == 1) return 10;
+
+        int[][] keypad = {
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 9},
+            {-1, 0, -1}  
+        };
+
+        int[] row = {0, -1, 1, 0, 0};
+        int[] col = {0, 0, 0, -1, 1};
+
+        int[][] dp = new int[10][n + 1];
+
+        for (int i = 0; i <= 9; i++) {
+            dp[i][1] = 1;
+        }
+
+        for (int len = 2; len <= n; len++) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 3; j++) {
+                    int digit = keypad[i][j];
+                    if (digit == -1) continue;
+
+                    for (int move = 0; move < 5; move++) {
+                        int ni = i + row[move];
+                        int nj = j + col[move];
+                        if (ni >= 0 && ni < 4 && nj >= 0 && nj < 3 && keypad[ni][nj] != -1) {
+                            int nextDigit = keypad[ni][nj];
+                            dp[digit][len] += dp[nextDigit][len - 1];
+                        }
+                    }
+                }
+            }
+        }
+
+        int totalCount = 0;
+        for (int i = 0; i <= 9; i++) {
+            totalCount += dp[i][n];
+        }
+
+        return totalCount;
+    }
+}
