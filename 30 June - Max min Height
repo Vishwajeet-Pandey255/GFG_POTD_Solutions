@@ -1,0 +1,42 @@
+class Solution {
+    public int maxMinHeight(int[] arr, int k, int w) {
+        int n = arr.length;
+        int low = 0, high = (int)1e9 + k, ans = 0;
+
+        while (low <= high) {
+            int mid = low + (high - low) / 2;
+            if (canAchieve(arr, k, w, mid)) {
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+    private boolean canAchieve(int[] arr, int k, int w, int target) {
+        int n = arr.length;
+        int[] water = new int[n + 1]; // difference array
+        long used = 0, curr = 0;
+
+        for (int i = 0; i < n; i++) {
+            curr += water[i];
+
+            int effectiveHeight = arr[i] + (int)curr;
+
+            if (effectiveHeight < target) {
+                int need = target - effectiveHeight;
+                used += need;
+
+                if (used > k) return false;
+
+                curr += need;
+                if (i + w < n) water[i + w] -= need;
+            }
+        }
+
+        return true;
+    }
+}
