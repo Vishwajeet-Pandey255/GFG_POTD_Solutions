@@ -1,0 +1,41 @@
+import java.util.*;
+
+class Solution {
+    public int substrCount(String s, int k) {
+        if (s.length() < k) return 0;
+
+        int count = 0;
+        Map<Character, Integer> freqMap = new HashMap<>();
+        int distinct = 0;
+
+        for (int i = 0; i < k; i++) {
+            char c = s.charAt(i);
+            freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
+            if (freqMap.get(c) == 1) distinct++;
+        }
+
+        if (distinct == k - 1) count++;
+
+        for (int i = k; i < s.length(); i++) {
+            char removeChar = s.charAt(i - k);
+            char addChar = s.charAt(i);
+
+            // Remove the character going out of the window
+            freqMap.put(removeChar, freqMap.get(removeChar) - 1);
+            if (freqMap.get(removeChar) == 0) {
+                freqMap.remove(removeChar);
+                distinct--;
+            }
+
+            // Add the new character
+            freqMap.put(addChar, freqMap.getOrDefault(addChar, 0) + 1);
+            if (freqMap.get(addChar) == 1) {
+                distinct++;
+            }
+
+            if (distinct == k - 1) count++;
+        }
+
+        return count;
+    }
+}
