@@ -1,0 +1,30 @@
+import java.util.*;
+
+class Solution {
+    public String longestString(String[] words) {
+        // 1) Sort by length ascending; if same length, lexicographically ascending
+        Arrays.sort(words, (a, b) -> {
+            if (a.length() != b.length()) 
+                return a.length() - b.length();
+            return a.compareTo(b);
+        });
+        
+        Set<String> buildable = new HashSet<>();
+        buildable.add("");        // so that single‑char words (whose prefix is "") pass
+        String result = "";
+        
+        for (String w : words) {
+            // If the word minus its last character is already buildable, then w is buildable
+            String prefix = w.substring(0, w.length() - 1);
+            if (buildable.contains(prefix)) {
+                buildable.add(w);
+                // only update when strictly longer → keeps the lexicographically smallest of each length
+                if (w.length() > result.length()) {
+                    result = w;
+                }
+            }
+        }
+        
+        return result;
+    }
+}
