@@ -1,0 +1,65 @@
+class Solution {
+    public int nonLisMaxSum(int[] arr) {
+        int n = arr.length;
+        if (n == 0) return 0;
+
+        // dp[i] = length of LIS ending at i
+        // sumDP[i] = minimum possible sum of an LIS of length dp[i] ending at i
+        // parent[i] = predecessor index in that minimal‑sum LIS
+        int[] dp     = new int[n];
+        int[] sumDP  = new int[n];
+        int[] parent = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            dp[i]     = 1;
+            sumDP[i]  = arr[i];
+            parent[i] = -1;
+        }
+
+        // Build dp and sumDP
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (arr[j] < arr[i]) {
+                    int candLen = dp[j] + 1;
+                    int candSum = sumDP[j] + arr[i];
+
+                    if (candLen > dp[i]) {
+                        // found longer LIS ending at i
+                        dp[i]     = candLen;
+                        sumDP[i]  = candSum;
+                        parent[i] = j;
+                    }
+                    else if (candLen == dp[i] && candSum < sumDP[i]) {
+                        // same length but smaller sum → prefer this
+                        sumDP[i]  = candSum;
+                        parent[i] = j;
+                    }
+                }
+            }
+        }
+
+        // find overall max LIS length and among those the minimal-sum endpoint
+        int maxLen = 0, bestEnd = 0;
+        for (int i = 0; i < n; i++) {
+            if (dp[i] > maxLen || (dp[i] == maxLen && sumDP[i] < sumDP[bestEnd])) {
+                maxLen = dp[i];
+                bestEnd = i;
+            }
+        }
+
+        // mark which indices are in that minimal-sum LIS
+        boolean[] inLIS = new boolean[n];
+        for (int cur = bestEnd; cur != -1; cur = parent[cur]) {
+            inLIS[cur] = true;
+        }
+
+        // compute total sum and LIS sum
+        long total = 0, lisSum = 0;
+        for (int i = 0; i < n; i++) {
+            total += arr[i];
+            if (inLIS[i]) lisSum += arr[i];
+        }
+
+        return (int)(total - lisSum);
+    }
+}
