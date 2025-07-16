@@ -1,0 +1,48 @@
+import java.util.*;
+
+class Solution {
+    public static int countNumbers(int n) {
+        int limit = (int) Math.sqrt(n) + 1;
+        boolean[] isPrime = new boolean[limit + 1];
+        Arrays.fill(isPrime, true);
+        isPrime[0] = isPrime[1] = false;
+        // Sieve
+        for (int i = 2; i * i <= limit; i++) {
+            if (isPrime[i]) {
+                for (int j = i * i; j <= limit; j += i) {
+                    isPrime[j] = false;
+                }
+            }
+        }
+
+        List<Integer> primes = new ArrayList<>();
+        for (int i = 2; i <= limit; i++) {
+            if (isPrime[i]) primes.add(i);
+        }
+
+        int count = 0;
+
+        // 1) Numbers of form p^8  => (8+1)=9 divisors
+        for (int p : primes) {
+            long p2 = 1L * p * p;
+            long p4 = p2 * p2;
+            long p8 = p4 * p4;
+            if (p8 > n) break;       // ← stop early to avoid overflow
+            count++;
+        }
+
+        // 2) Numbers of form p^2 * q^2  => (2+1)*(2+1)=9 divisors
+        int sz = primes.size();
+        for (int i = 0; i < sz; i++) {
+            long p2 = 1L * primes.get(i) * primes.get(i);
+            for (int j = i + 1; j < sz; j++) {
+                long q2 = 1L * primes.get(j) * primes.get(j);
+                long val = p2 * q2;
+                if (val > n) break;  // since q only grows larger
+                count++;
+            }
+        }
+
+        return count;
+    }
+}
