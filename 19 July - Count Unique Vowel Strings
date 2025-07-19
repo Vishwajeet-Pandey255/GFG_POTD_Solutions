@@ -1,0 +1,39 @@
+class Solution {
+    public int vowelCount(String s) {
+        // Count occurrences of each vowel
+        int a = 0, e = 0, i = 0, o = 0, u = 0;
+        for (char c : s.toCharArray()) {
+            switch (c) {
+                case 'a': a++; break;
+                case 'e': e++; break;
+                case 'i': i++; break;
+                case 'o': o++; break;
+                case 'u': u++; break;
+            }
+        }
+        
+        // Build an array of the positive counts
+        int[] counts = new int[] {a, e, i, o, u};
+        long picks = 1;
+        int distinctVowels = 0;
+        for (int cnt : counts) {
+            if (cnt > 0) {
+                picks *= cnt;      // choose one occurrence of this vowel
+                distinctVowels++;
+            }
+        }
+        
+        // If there are no vowels, no strings can be formed
+        if (distinctVowels == 0) {
+            return 0;
+        }
+        
+        // Multiply by distinctVowels! to count permutations
+        long fact = 1;
+        for (int k = 2; k <= distinctVowels; k++) {
+            fact *= k;
+        }
+        
+        return (int)(picks * fact);
+    }
+}
