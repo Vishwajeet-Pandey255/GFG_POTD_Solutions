@@ -1,0 +1,25 @@
+class Solution {
+    public int countValid(int n, int[] arr) {
+        boolean[] forbidden = new boolean[10];
+        for (int d : arr) forbidden[d] = true;
+        
+      
+        long total = 9L * (long)Math.pow(10, n - 1);
+        
+        
+        int cntNone = 0;
+        for (int d = 0; d <= 9; d++) {
+            if (!forbidden[d]) cntNone++;
+        }
+        
+        int cntNoneFirst = 0;
+        for (int d = 1; d <= 9; d++) {
+            if (!forbidden[d]) cntNoneFirst++;
+        }
+        
+       
+        long noOccurrence = cntNoneFirst * (long)Math.pow(cntNone, n - 1);
+        
+        return (int)(total - noOccurrence);
+    }
+}
