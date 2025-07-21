@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Solution {
+    int cntCoprime(int[] arr) {
+        int n = arr.length;
+        int maxA = 0;
+        for (int v : arr) {
+            if (v > maxA) maxA = v;
+        }
+        
+        // Frequency of each value in arr
+        int[] freq = new int[maxA + 1];
+        for (int v : arr) {
+            freq[v]++;
+        }
+        
+        // countMultiples[d] = number of elements in arr divisible by d
+        int[] countMultiples = new int[maxA + 1];
+        for (int d = 1; d <= maxA; d++) {
+            for (int multiple = d; multiple <= maxA; multiple += d) {
+                countMultiples[d] += freq[multiple];
+            }
+        }
+        
+        // Compute Möbius function mu up to maxA using linear sieve
+        int[] mu = new int[maxA + 1];
+        int[] primes = new int[maxA + 1];
+        boolean[] isComposite = new boolean[maxA + 1];
+        int primeCount = 0;
+        
+        mu[1] = 1;
+        for (int i = 2; i <= maxA; i++) {
+            if (!isComposite[i]) {
+                primes[primeCount++] = i;
+                mu[i] = -1;
+            }
+            for (int j = 0; j < primeCount; j++) {
+                int p = primes[j];
+                if (i * p > maxA) break;
+                isComposite[i * p] = true;
+                if (i % p == 0) {
+                    mu[i * p] = 0;
+                    break;
+                } else {
+                    mu[i * p] = -mu[i];
+                }
+            }
+        }
+        
+        // Use inclusion–exclusion: number of pairs with gcd == 1
+        long total = 0;
+        for (int d = 1; d <= maxA; d++) {
+            int c = countMultiples[d];
+            if (c >= 2 && mu[d] != 0) {
+                long pairs = (long)c * (c - 1) / 2;
+                total += mu[d] * pairs;
+            }
+        }
+        
+        return (int) total;
+    }
+    
+   
+}
