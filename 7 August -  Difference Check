@@ -1,0 +1,26 @@
+class Solution {
+    public int minDifference(String[] arr) {
+        int n = arr.length;
+        int[] secondsArray = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            String[] parts = arr[i].split(":");
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+            int seconds = Integer.parseInt(parts[2]);
+            secondsArray[i] = hours * 3600 + minutes * 60 + seconds;
+        }
+
+        Arrays.sort(secondsArray);
+
+        int minDiff = Integer.MAX_VALUE;
+        for (int i = 1; i < n; i++) {
+            minDiff = Math.min(minDiff, secondsArray[i] - secondsArray[i - 1]);
+        }
+
+        int midnightDiff = 86400 - secondsArray[n - 1] + secondsArray[0];
+        minDiff = Math.min(minDiff, midnightDiff);
+
+        return minDiff;
+    }
+}
