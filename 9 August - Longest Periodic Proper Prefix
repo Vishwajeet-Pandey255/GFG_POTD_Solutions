@@ -1,0 +1,25 @@
+class Solution {
+    int getLongestPrefix(String s) {
+        int n = s.length();
+        if (n <= 1) return -1;
+
+        // Build Z-array
+        int[] z = new int[n];
+        int l = 0, r = 0;
+        for (int i = 1; i < n; i++) {
+            if (i <= r) z[i] = Math.min(r - i + 1, z[i - l]);
+            while (i + z[i] < n && s.charAt(z[i]) == s.charAt(i + z[i])) z[i]++;
+            if (i + z[i] - 1 > r) {
+                l = i;
+                r = i + z[i] - 1;
+            }
+        }
+
+        // Find longest proper prefix length L such that repeating prefix of length L
+        // produces a string that starts with s -> i.e., Z[L] >= n - L
+        for (int L = n - 1; L >= 1; L--) {
+            if (z[L] >= n - L) return L;
+        }
+        return -1;
+    }
+}
