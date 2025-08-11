@@ -1,0 +1,72 @@
+class Solution {
+    public int maxSum(String s) {
+        int n = s.length();
+        if (n == 0) return 0;
+
+        // Manacher for odd palindromes: d1[i] = radius (count of chars including center)
+        int[] d1 = new int[n];
+        int l = 0, r = -1;
+        for (int i = 0; i < n; i++) {
+            int k = 1;
+            if (i <= r) {
+                int mirror = l + r - i;
+                k = Math.min(d1[mirror], r - i + 1);
+            }
+            while (i - k >= 0 && i + k < n && s.charAt(i - k) == s.charAt(i + k)) {
+                k++;
+            }
+            d1[i] = k;
+            if (i + k - 1 > r) {
+                l = i - k + 1;
+                r = i + k - 1;
+            }
+        }
+
+        // arrStart[pos] = best (max) odd-palindrome length whose LEFTMOST start is pos (full maximal palindrome)
+        // arrEnd[pos]   = best (max) odd-palindrome length whose RIGHTMOST end   is pos (full maximal palindrome)
+        int[] arrStart = new int[n];
+        int[] arrEnd = new int[n];
+        for (int i = 0; i < n; i++) {
+            int len = 2 * d1[i] - 1;
+            int start = i - d1[i] + 1;
+            int end = i + d1[i] - 1;
+            if (start >= 0) arrStart[start] = Math.max(arrStart[start], len);
+            if (end >= 0)   arrEnd[end]     = Math.max(arrEnd[end], len);
+        }
+
+        // Build best palindrome starting at each index by propagating left->right and decreasing by 2 each step
+        int[] bestStart = new int[n];
+        int cur = 0;
+        for (int i = 0; i < n; i++) {
+            cur = Math.max(cur, arrStart[i]);
+            bestStart[i] = cur;
+            cur = Math.max(cur - 2, 0); // inner palindromes shrink by 2 when start shifts right by 1
+        }
+
+        // Build best palindrome ending at each index by propagating right->left and decreasing by 2 each step
+        int[] bestEnd = new int[n];
+        cur = 0;
+        for (int i = n - 1; i >= 0; i--) {
+            cur = Math.max(cur, arrEnd[i]);
+            bestEnd[i] = cur;
+            cur = Math.max(cur - 2, 0); // inner palindromes shrink by 2 when end shifts left by 1
+        }
+
+        // maxPrefix[i] = best palindrome length that ends at or before i
+        int[] maxPrefix = new int[n];
+        for (int i = 0; i < n; i++) maxPrefix[i] = bestEnd[i];
+        for (int i = 1; i < n; i++) maxPrefix[i] = Math.max(maxPrefix[i], maxPrefix[i - 1]);
+
+        // maxSuffix[i] = best palindrome length that starts at or after i
+        int[] maxSuffix = new int[n];
+        for (int i = 0; i < n; i++) maxSuffix[i] = bestStart[i];
+        for (int i = n - 2; i >= 0; i--) maxSuffix[i] = Math.max(maxSuffix[i], maxSuffix[i + 1]);
+
+        // split between i and i+1 (left: [0..i], right: [i+1..n-1])
+        int ans = 0;
+        for (int i = 0; i + 1 < n; i++) {
+            ans = Math.max(ans, maxPrefix[i] + maxSuffix[i + 1]);
+        }
+        return ans;
+    }
+}
