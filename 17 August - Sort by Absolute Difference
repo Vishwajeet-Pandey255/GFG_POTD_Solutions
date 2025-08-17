@@ -1,0 +1,32 @@
+
+
+class Solution {
+    public void rearrange(int[] arr, int x) {
+        // Convert array to list of indices for stable sorting
+        Integer[] idx = new Integer[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            idx[i] = i;
+        }
+        
+        // Sort indices based on absolute difference with x
+        Arrays.sort(idx, (a, b) -> {
+            int diff1 = Math.abs(arr[a] - x);
+            int diff2 = Math.abs(arr[b] - x);
+            if (diff1 == diff2) {
+                return a - b; // preserve order (stable)
+            }
+            return diff1 - diff2;
+        });
+        
+        // Create result array
+        int[] result = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            result[i] = arr[idx[i]];
+        }
+        
+        // Copy back to original array
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = result[i];
+        }
+    }
+}
