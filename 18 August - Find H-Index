@@ -1,0 +1,21 @@
+import java.util.Arrays;
+
+class Solution {
+    public int hIndex(int[] citations) {
+        // Sort citations in descending order
+        Arrays.sort(citations);
+        int n = citations.length;
+        int hIndex = 0;
+        
+        // Check how many papers have at least i+1 citations
+        for (int i = 0; i < n; i++) {
+            int papersWithAtLeast = n - i; // number of papers from i to end
+            if (citations[i] >= papersWithAtLeast) {
+                hIndex = papersWithAtLeast;
+                break;
+            }
+        }
+        
+        return hIndex;
+    }
+}
