@@ -1,0 +1,59 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<Integer> farMin(int[] arr) {
+        int n = arr.length;
+        ArrayList<Integer> res = new ArrayList<>(Collections.nCopies(n, -1));
+        if (n == 0) return res;
+
+        // Step 1: Coordinate compression (map values -> ranks 1..m)
+        int[] sorted = arr.clone();
+        Arrays.sort(sorted);
+        HashMap<Integer, Integer> rankMap = new HashMap<>();
+        int rank = 1;
+        for (int v : sorted) {
+            if (!rankMap.containsKey(v)) {
+                rankMap.put(v, rank++);
+            }
+        }
+
+        int size = rank; // number of unique values
+        int[] bit = new int[size + 2];
+        Arrays.fill(bit, -1);
+
+        // BIT query: max index for prefix [1..idx]
+        java.util.function.IntUnaryOperator query = new java.util.function.IntUnaryOperator() {
+            public int applyAsInt(int idx) {
+                int ans = -1;
+                while (idx > 0) {
+                    if (bit[idx] > ans) ans = bit[idx];
+                    idx -= idx & -idx;
+                }
+                return ans;
+            }
+        };
+
+        // BIT update: set max index for position idx
+        java.util.function.BiConsumer<Integer, Integer> update = (idxObj, valObj) -> {
+            int idx = idxObj;
+            int val = valObj;
+            while (idx <= size) {
+                if (val > bit[idx]) bit[idx] = val;
+                idx += idx & -idx;
+            }
+        };
+
+        // Step 2: Process from right to left
+        for (int i = n - 1; i >= 0; --i) {
+            int v = arr[i];
+            int r = rankMap.get(v); // compressed rank
+            if (r > 1) {
+                int bestIdx = query.applyAsInt(r - 1);
+                res.set(i, bestIdx);
+            }
+            update.accept(r, i); // update BIT with index i
+        }
+
+        return res;
+    }
+}
