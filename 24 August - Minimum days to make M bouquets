@@ -1,0 +1,50 @@
+class Solution {
+    public int minDaysBloom(int[] arr, int k, int m) {
+        int n = arr.length;
+        
+        // Case: Not enough flowers
+        if ((long)m * k > n) return -1;
+        
+        int left = Integer.MAX_VALUE, right = Integer.MIN_VALUE;
+        for (int val : arr) {
+            left = Math.min(left, val);
+            right = Math.max(right, val);
+        }
+        
+        int ans = -1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (canMake(arr, k, m, mid)) {
+                ans = mid;
+                right = mid - 1; // try smaller days
+            } else {
+                left = mid + 1; // need more days
+            }
+        }
+        
+        return ans;
+    }
+    
+    // Helper: check if we can make at least m bouquets in given days
+    private boolean canMake(int[] arr, int k, int m, int day) {
+        int bouquets = 0, flowers = 0;
+        
+        for (int val : arr) {
+            if (val <= day) {
+                flowers++;
+                if (flowers == k) {
+                    bouquets++;
+                    flowers = 0; // reset after making bouquet
+                }
+            } else {
+                flowers = 0; // reset because not adjacent
+            }
+            
+            if (bouquets >= m) return true;
+        }
+        
+        return false;
+    }
+}
