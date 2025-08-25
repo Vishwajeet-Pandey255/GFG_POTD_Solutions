@@ -1,0 +1,66 @@
+class Solution {
+    // check if we can make the median at least
+    // 'target' using at most 'k' operation
+    static boolean isPossible(int[] arr, int target, int k) {
+        int n = arr.length; // Get array length.
+        long temp_k = k; // Use long to prevent overflow and avoid modifying original k.
+
+        if (n % 2 == 1) {
+            // for odd-sized array, consider elements from
+            // middle to end
+            for (int i = n / 2; i < n; ++i) { // Iterate from the single median element.
+                if (arr[i] < target)
+                    temp_k -= (target - arr[i]); // Subtract cost from our budget.
+            }
+        } else {
+            // for even-sized array, handle two middle
+            // elements separately
+            if (arr[n / 2] <= target) { // If the higher middle element is not already above target.
+                temp_k -= (target - arr[n / 2]); // Cost for the higher middle element.
+                temp_k -= (target - arr[n / 2 - 1]); // Cost for the lower middle element.
+            } else {
+                // This handles when arr[n/2] > target.
+                temp_k -= (2L * target - (arr[n / 2] + arr[n / 2 - 1])); // Use 2L for long arithmetic.
+            }
+            // process remaining elements to the right
+            for (int i = n / 2 + 1; i < n; ++i) { // Iterate over the rest of the right half.
+                if (arr[i] < target)
+                    temp_k -= (target - arr[i]); // Subtract cost to raise them to target.
+            }
+        }
+
+        return temp_k >= 0; // Return true if we had enough operations.
+    }
+
+    // function to compute maximum achievable median
+    // with given k operation
+    static int maximizeMedian(int[] arr, int k) {
+        int n = arr.length;
+        Arrays.sort(arr); // Sort the array to find the median.
+
+        // compute initial median floor if even length
+        int iniMedian = arr[n / 2];
+        if (n % 2 == 0) {
+            iniMedian += arr[n / 2 - 1];
+            iniMedian /= 2;
+        }
+
+        int low = iniMedian, high = iniMedian + k; // Set the binary search range.
+        int bestMedian = iniMedian; // Initialize with current median.
+
+        // binary search to find maximum
+        // achievable median
+        while (low <= high) {
+            int mid = low + (high - low) / 2; // Calculate midpoint.
+
+            if (isPossible(arr, mid, k)) {
+                bestMedian = mid; // If possible, update best answer.
+                low = mid + 1;    // Try for a larger median.
+            } else {
+                high = mid - 1;   // Otherwise, try for a smaller one.
+            }
+        }
+
+        return bestMedian;
+    }
+}
