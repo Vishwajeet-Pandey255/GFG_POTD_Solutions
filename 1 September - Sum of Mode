@@ -1,0 +1,64 @@
+import java.util.*;
+
+class Solution {
+    private Map<Integer, Integer> freqMap; // element -> frequency
+    private Map<Integer, TreeSet<Integer>> freqToNums; // frequency -> set of elements
+    private int maxFreq;
+
+    public int sumOfModes(int[] arr, int k) {
+        int n = arr.length;
+        if (k > n) return 0;
+
+        freqMap = new HashMap<>();
+        freqToNums = new HashMap<>();
+        maxFreq = 0;
+        int sum = 0;
+
+        // build initial window
+        for (int i = 0; i < k; i++) {
+            add(arr[i], 1);
+        }
+
+        // first window mode
+        sum += freqToNums.get(maxFreq).first();
+
+        // sliding window
+        for (int i = k; i < n; i++) {
+            add(arr[i - k], -1); // remove outgoing
+            add(arr[i], 1);      // add incoming
+
+            // ensure maxFreq is valid
+            while (!freqToNums.containsKey(maxFreq)) {
+                maxFreq--;
+            }
+
+            sum += freqToNums.get(maxFreq).first();
+        }
+
+        return sum;
+    }
+
+    // helper method to add/remove element frequency
+    private void add(int num, int delta) {
+        int oldFreq = freqMap.getOrDefault(num, 0);
+        int newFreq = oldFreq + delta;
+
+        // remove from old frequency set
+        if (oldFreq > 0) {
+            TreeSet<Integer> set = freqToNums.get(oldFreq);
+            set.remove(num);
+            if (set.isEmpty()) {
+                freqToNums.remove(oldFreq);
+            }
+        }
+
+        // update with new frequency
+        if (newFreq > 0) {
+            freqMap.put(num, newFreq);
+            freqToNums.computeIfAbsent(newFreq, x -> new TreeSet<>()).add(num);
+            maxFreq = Math.max(maxFreq, newFreq);
+        } else {
+            freqMap.remove(num);
+        }
+    }
+}
