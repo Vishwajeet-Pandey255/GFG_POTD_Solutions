@@ -1,0 +1,57 @@
+/*
+class Node
+{
+    int data;
+    Node next;
+    Node(int key)
+    {
+        data = key;
+        next = null;
+    }
+}
+*/
+
+class Solution {
+    public Node reverseKGroup(Node head, int k) {
+        if (head == null || k == 1) return head;
+
+        Node dummy = new Node(0);
+        dummy.next = head;
+        Node prevGroupEnd = dummy;
+
+        while (head != null) {
+            Node groupStart = head;
+            Node prev = null;
+            Node curr = head;
+
+            // Check how many nodes are available in this group
+            int count = 0;
+            Node temp = head;
+            while (temp != null && count < k) {
+                temp = temp.next;
+                count++;
+            }
+
+            // If less than k nodes remain, still reverse (as per problem statement)
+            int toReverse = count; 
+
+            // Reverse 'toReverse' nodes
+            while (toReverse-- > 0 && curr != null) {
+                Node nextNode = curr.next;
+                curr.next = prev;
+                prev = curr;
+                curr = nextNode;
+            }
+
+            // Connect previous group's end to the new head of this group
+            prevGroupEnd.next = prev;
+            groupStart.next = curr; 
+
+            // Move pointers for next iteration
+            prevGroupEnd = groupStart;
+            head = curr;
+        }
+
+        return dummy.next;
+    }
+}
