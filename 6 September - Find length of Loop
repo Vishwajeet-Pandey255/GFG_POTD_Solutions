@@ -1,0 +1,46 @@
+/*
+class Node {
+    int data;
+    Node next;
+
+    Node(int x) {
+        data = x;
+        next = null;
+    }
+}
+*/
+
+class Solution {
+    public int lengthOfLoop(Node head) {
+        if (head == null) return 0;
+
+        Node slow = head, fast = head;
+
+        // Step 1: Detect loop using Floyd’s algorithm
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+
+            // Loop detected
+            if (slow == fast) {
+                return countLoopLength(slow);
+            }
+        }
+
+        // No loop
+        return 0;
+    }
+
+    // Step 2: Count loop length starting from meeting point
+    private int countLoopLength(Node node) {
+        int count = 1;
+        Node temp = node.next;
+
+        while (temp != node) {
+            count++;
+            temp = temp.next;
+        }
+
+        return count;
+    }
+}
