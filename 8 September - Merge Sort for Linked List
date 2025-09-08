@@ -1,0 +1,67 @@
+/*
+class Node {
+    int data;
+    Node next;
+
+    Node(int key) {
+        data = key;
+        next = null;
+    }
+}
+*/
+
+class Solution {
+    public Node mergeSort(Node head) {
+        // base case
+        if (head == null || head.next == null) {
+            return head;
+        }
+        
+        // find middle node
+        Node mid = getMiddle(head);
+        Node nextOfMid = mid.next;
+        mid.next = null; // split into two halves
+        
+        // recursive mergeSort calls
+        Node left = mergeSort(head);
+        Node right = mergeSort(nextOfMid);
+        
+        // merge both halves
+        return merge(left, right);
+    }
+    
+    // function to find middle of linked list
+    private Node getMiddle(Node head) {
+        if (head == null) return head;
+        Node slow = head, fast = head;
+        
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+    
+    // merge two sorted lists
+    private Node merge(Node l1, Node l2) {
+        Node dummy = new Node(-1);
+        Node tail = dummy;
+        
+        while (l1 != null && l2 != null) {
+            if (l1.data <= l2.data) {
+                tail.next = l1;
+                l1 = l1.next;
+            } else {
+                tail.next = l2;
+                l2 = l2.next;
+            }
+            tail = tail.next;
+        }
+        
+        // attach the remaining nodes
+        if (l1 != null) tail.next = l1;
+        else tail.next = l2;
+        
+        return dummy.next;
+    }
+}
