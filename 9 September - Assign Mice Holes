@@ -1,0 +1,20 @@
+import java.util.*;
+
+class Solution {
+    public int assignHole(int[] mices, int[] holes) {
+        // Step 1: Sort both arrays
+        Arrays.sort(mices);
+        Arrays.sort(holes);
+
+        int n = mices.length;
+        int maxTime = 0;
+
+        // Step 2: Assign each mouse to the corresponding hole
+        for (int i = 0; i < n; i++) {
+            maxTime = Math.max(maxTime, Math.abs(mices[i] - holes[i]));
+        }
+
+        // Step 3: Return the max time (last mouse to enter hole)
+        return maxTime;
+    }
+}
