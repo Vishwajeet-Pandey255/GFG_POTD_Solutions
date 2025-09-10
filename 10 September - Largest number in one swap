@@ -1,0 +1,31 @@
+class Solution {
+    public String largestSwap(String s) {
+        char[] arr = s.toCharArray();
+        int n = arr.length;
+
+        // Track the index of the max digit from right side for each position
+        int[] maxRightIndex = new int[n];
+        maxRightIndex[n - 1] = n - 1;
+
+        for (int i = n - 2; i >= 0; i--) {
+            if (arr[i] > arr[maxRightIndex[i + 1]]) {
+                maxRightIndex[i] = i;
+            } else {
+                maxRightIndex[i] = maxRightIndex[i + 1];
+            }
+        }
+
+        // Try to swap the first position where a bigger digit exists on the right
+        for (int i = 0; i < n; i++) {
+            if (arr[i] < arr[maxRightIndex[i]]) {
+                // Swap arr[i] with the largest digit found on the right
+                char temp = arr[i];
+                arr[i] = arr[maxRightIndex[i]];
+                arr[maxRightIndex[i]] = temp;
+                break; // only one swap allowed
+            }
+        }
+
+        return new String(arr);
+    }
+}
