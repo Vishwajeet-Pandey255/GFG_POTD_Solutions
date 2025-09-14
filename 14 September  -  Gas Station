@@ -1,0 +1,19 @@
+class Solution {
+    public int startStation(int[] gas, int[] cost) {
+        int totalGas = 0;     // total net gas available
+        int currGas = 0;      // current gas balance in the tank
+        int start = 0;        // candidate starting index
+        
+        for (int i = 0; i < gas.length; i++) {
+            totalGas += gas[i] - cost[i];
+            currGas += gas[i] - cost[i];
+            
+            if (currGas < 0) {
+                start = i + 1;
+                currGas = 0;
+            }
+        }
+        
+        return totalGas >= 0 ? start : -1;
+    }
+}
