@@ -1,0 +1,27 @@
+class Solution {
+    public boolean stringStack(String pat, String tar) {
+        int i = pat.length() - 1;
+        int j = tar.length() - 1;
+        int extra = 0; // number of appended chars to skip (will be popped)
+
+        while (i >= 0) {
+            if (extra > 0) {
+                // this pat[i] is one of the appended chars that gets popped later
+                extra--;
+                i--;
+            } else {
+                // try to match current target char
+                if (j >= 0 && pat.charAt(i) == tar.charAt(j)) {
+                    i--;
+                    j--;
+                } else {
+                    // this pat[i] will be an appended char that gets popped later
+                    extra++;
+                    i--;
+                }
+            }
+        }
+
+        return j < 0; // all tar matched?
+    }
+}
