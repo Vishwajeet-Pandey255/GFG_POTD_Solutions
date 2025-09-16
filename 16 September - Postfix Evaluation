@@ -1,0 +1,36 @@
+import java.util.*;
+
+class Solution {
+    public int evaluatePostfix(String[] arr) {
+        Stack<Integer> stack = new Stack<>();
+        
+        for (String token : arr) {
+            if (isOperator(token)) {
+                int b = stack.pop();  // second operand
+                int a = stack.pop();  // first operand
+                int res = 0;
+                
+                switch (token) {
+                    case "+": res = a + b; break;
+                    case "-": res = a - b; break;
+                    case "*": res = a * b; break;
+                    case "/": 
+                        // floor division handling
+                        res = (int)Math.floor((double)a / b);
+                        break;
+                    case "^": res = (int)Math.pow(a, b); break;
+                }
+                stack.push(res);
+            } else {
+                stack.push(Integer.parseInt(token));
+            }
+        }
+        
+        return stack.pop(); // final result
+    }
+    
+    private boolean isOperator(String s) {
+        return s.equals("+") || s.equals("-") || s.equals("*") || 
+               s.equals("/") || s.equals("^");
+    }
+}
