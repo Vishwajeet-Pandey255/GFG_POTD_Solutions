@@ -1,0 +1,39 @@
+class Solution {
+    static String decodeString(String s) {
+        // Stack to store counts
+        Stack<Integer> countStack = new Stack<>();
+        // Stack to store strings
+        Stack<StringBuilder> strStack = new Stack<>();
+        
+        StringBuilder curr = new StringBuilder();
+        int num = 0;
+        
+        for (char c : s.toCharArray()) {
+            if (Character.isDigit(c)) {
+                // Form the number (can be multiple digits)
+                num = num * 10 + (c - '0');
+            } else if (c == '[') {
+                // Push the current number and current string to stacks
+                countStack.push(num);
+                strStack.push(curr);
+                // Reset for new substring
+                num = 0;
+                curr = new StringBuilder();
+            } else if (c == ']') {
+                // Pop the string and number from stacks
+                StringBuilder temp = curr;
+                curr = strStack.pop();
+                int repeatTimes = countStack.pop();
+                // Repeat the substring
+                while (repeatTimes-- > 0) {
+                    curr.append(temp);
+                }
+            } else {
+                // Just a character
+                curr.append(c);
+            }
+        }
+        
+        return curr.toString();
+    }
+}
