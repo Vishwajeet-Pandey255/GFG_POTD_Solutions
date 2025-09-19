@@ -1,0 +1,21 @@
+class Solution {
+    public int minParentheses(String s) {
+        int open = 0;   // count of unmatched '('
+        int close = 0;  // count of unmatched ')'
+        
+        for (char ch : s.toCharArray()) {
+            if (ch == '(') {
+                open++;  // expecting a future ')'
+            } else {
+                if (open > 0) {
+                    open--;  // match with a previous '('
+                } else {
+                    close++; // no '(' available, so this ')' is unmatched
+                }
+            }
+        }
+        
+        // total unmatched '(' + unmatched ')'
+        return open + close;
+    }
+}
