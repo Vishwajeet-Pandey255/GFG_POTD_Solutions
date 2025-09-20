@@ -1,0 +1,67 @@
+import java.util.*;
+
+class Solution {
+    public static int longestSubarray(int[] arr) {
+        int n = arr.length;
+        // buckets[val] = list of indices i where arr[i] == val (only for val in 1..n)
+        List<Integer>[] buckets = new ArrayList[n + 1];
+        for (int i = 0; i <= n; i++) buckets[i] = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            int v = arr[i];
+            if (v >= 1 && v <= n) buckets[v].add(i);
+        }
+
+        int[] parent = new int[n];
+        int[] size = new int[n];
+        Arrays.fill(parent, -1); // -1 means inactive
+        boolean[] active = new boolean[n];
+
+        int maxSize = 0;
+        int ans = 0;
+
+        for (int t = 1; t <= n; t++) {
+            for (int idx : buckets[t]) {
+                // activate idx
+                parent[idx] = idx;
+                size[idx] = 1;
+                active[idx] = true;
+
+                // union with left neighbor if active
+                if (idx - 1 >= 0 && active[idx - 1]) {
+                    union(parent, size, idx, idx - 1);
+                }
+                // union with right neighbor if active
+                if (idx + 1 < n && active[idx + 1]) {
+                    union(parent, size, idx, idx + 1);
+                }
+
+                int root = find(parent, idx);
+                if (size[root] > maxSize) maxSize = size[root];
+            }
+
+            if (maxSize >= t) ans = t; // there exists a block of length >= t made of values <= t
+        }
+
+        return ans;
+    }
+
+    private static int find(int[] parent, int x) {
+        // assume parent[x] != -1 (called only for active nodes)
+        while (parent[x] != x) {
+            parent[x] = parent[parent[x]];
+            x = parent[x];
+        }
+        return x;
+    }
+
+    private static void union(int[] parent, int[] size, int a, int b) {
+        int ra = find(parent, a);
+        int rb = find(parent, b);
+        if (ra == rb) return;
+        if (size[ra] < size[rb]) {
+            int tmp = ra; ra = rb; rb = tmp;
+        }
+        parent[rb] = ra;
+        size[ra] += size[rb];
+    }
+}
