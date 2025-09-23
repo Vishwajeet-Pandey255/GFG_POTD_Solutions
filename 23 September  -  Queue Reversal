@@ -1,0 +1,19 @@
+import java.util.*;
+
+class Solution {
+    public void reverseQueue(Queue<Integer> q) {
+        // base case: if queue is empty
+        if (q.isEmpty()) {
+            return;
+        }
+
+        // remove the front element
+        int front = q.poll();
+
+        // reverse the remaining queue
+        reverseQueue(q);
+
+        // add the front element back at the rear
+        q.offer(front);
+    }
+}
