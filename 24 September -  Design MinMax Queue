@@ -1,0 +1,74 @@
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+class SpecialQueue {
+    private Queue<Integer> queue;
+    private Deque<Integer> minDeque;
+    private Deque<Integer> maxDeque;
+    private AtomicInteger size;  // Thread-safe counter
+
+    public SpecialQueue() {
+        queue = new LinkedList<>();
+        minDeque = new ArrayDeque<>();
+        maxDeque = new ArrayDeque<>();
+        size = new AtomicInteger(0);
+    }
+
+    // Thread-safe enqueue
+    public synchronized void enqueue(int x) {
+        queue.offer(x);
+
+        // Maintain min deque
+        while (!minDeque.isEmpty() && minDeque.peekLast() > x) {
+            minDeque.pollLast();
+        }
+        minDeque.offerLast(x);
+
+        // Maintain max deque
+        while (!maxDeque.isEmpty() && maxDeque.peekLast() < x) {
+            maxDeque.pollLast();
+        }
+        maxDeque.offerLast(x);
+
+        size.incrementAndGet();
+    }
+
+    // Thread-safe dequeue
+    public synchronized void dequeue() {
+        if (queue.isEmpty()) return;
+
+        int removed = queue.poll();
+
+        if (removed == minDeque.peekFirst()) {
+            minDeque.pollFirst();
+        }
+        if (removed == maxDeque.peekFirst()) {
+            maxDeque.pollFirst();
+        }
+
+        size.decrementAndGet();
+    }
+
+    // Thread-safe front
+    public synchronized int getFront() {
+        if (queue.isEmpty()) throw new NoSuchElementException("Queue is empty");
+        return queue.peek();
+    }
+
+    // Thread-safe min
+    public synchronized int getMin() {
+        if (minDeque.isEmpty()) throw new NoSuchElementException("Queue is empty");
+        return minDeque.peekFirst();
+    }
+
+    // Thread-safe max
+    public synchronized int getMax() {
+        if (maxDeque.isEmpty()) throw new NoSuchElementException("Queue is empty");
+        return maxDeque.peekFirst();
+    }
+
+    // Thread-safe size
+    public int getSize() {
+        return size.get();
+    }
+}
