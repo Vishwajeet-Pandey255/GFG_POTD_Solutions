@@ -1,0 +1,24 @@
+class Solution {
+    public int kBitFlips(int[] arr, int k) {
+        int n = arr.length;
+        int flips = 0; // total flips
+        int flipCount = 0; // current parity of flips
+        int[] isFlipped = new int[n]; // marks if a flip starts here
+
+        for (int i = 0; i < n; i++) {
+            if (i >= k) {
+                flipCount ^= isFlipped[i - k];
+            }
+
+            if ((arr[i] ^ flipCount) == 0) {
+                if (i + k > n) return -1; // can't flip outside array
+
+                flips++;
+                flipCount ^= 1;  // apply flip
+                isFlipped[i] = 1; // mark flip start
+            }
+        }
+
+        return flips;
+    }
+}
