@@ -1,0 +1,29 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<ArrayList<Integer>> combinationSum(int n, int k) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        backtrack(result, new ArrayList<>(), n, k, 1);
+        return result;
+    }
+    
+    private void backtrack(ArrayList<ArrayList<Integer>> result, ArrayList<Integer> current, int n, int k, int start) {
+        // If we have chosen k numbers and sum is exactly n
+        if (current.size() == k && n == 0) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+        
+        // If sum exceeds or count exceeds, stop exploring
+        if (current.size() > k || n < 0) {
+            return;
+        }
+        
+        // Try numbers from 'start' to 9
+        for (int i = start; i <= 9; i++) {
+            current.add(i);
+            backtrack(result, current, n - i, k, i + 1); // move to next number
+            current.remove(current.size() - 1); // backtrack
+        }
+    }
+}
