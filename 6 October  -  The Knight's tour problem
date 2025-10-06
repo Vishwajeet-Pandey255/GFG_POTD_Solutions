@@ -1,0 +1,54 @@
+import java.util.*;
+
+class Solution {
+    // Knight moves
+    private static final int[] rowMove = {-2, -1, 1, 2, 2, 1, -1, -2};
+    private static final int[] colMove = {1, 2, 2, 1, -1, -2, -2, -1};
+
+    public ArrayList<ArrayList<Integer>> knightTour(int n) {
+        ArrayList<ArrayList<Integer>> board = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            // create mutable row initialized to -1
+            ArrayList<Integer> row = new ArrayList<>(Collections.nCopies(n, -1));
+            board.add(row);
+        }
+
+        // start position
+        board.get(0).set(0, 0);
+
+        if (solve(board, 0, 0, 1, n)) {
+            return board;
+        } else {
+            // Return the expected "-1" format for no solution:
+            ArrayList<ArrayList<Integer>> noSol = new ArrayList<>();
+            ArrayList<Integer> tmp = new ArrayList<>();
+            tmp.add(-1);
+            noSol.add(tmp);
+            return noSol;
+        }
+    }
+
+    private boolean solve(ArrayList<ArrayList<Integer>> board, int r, int c, int moveCount, int n) {
+        if (moveCount == n * n) return true; // all squares visited
+
+        for (int i = 0; i < 8; i++) {
+            int nextR = r + rowMove[i];
+            int nextC = c + colMove[i];
+
+            if (isSafe(nextR, nextC, board, n)) {
+                board.get(nextR).set(nextC, moveCount);
+
+                if (solve(board, nextR, nextC, moveCount + 1, n)) {
+                    return true;
+                } else {
+                    board.get(nextR).set(nextC, -1); // backtrack
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isSafe(int r, int c, ArrayList<ArrayList<Integer>> board, int n) {
+        return (r >= 0 && r < n && c >= 0 && c < n && board.get(r).get(c) == -1);
+    }
+}
