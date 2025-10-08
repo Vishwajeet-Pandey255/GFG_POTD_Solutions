@@ -1,0 +1,41 @@
+/*
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int val) {
+        data = val;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    int preIndex = 0;
+    public Node constructTree(int[] pre, int[] post) {
+        return construct(pre, post, 0, post.length - 1);
+    }
+    
+    private Node construct(int[] pre, int[] post, int l, int h) {
+        if (preIndex >= pre.length || l > h) return null;
+        
+        Node root = new Node(pre[preIndex++]);
+        
+        // Base case: single node
+        if (l == h || preIndex >= pre.length) return root;
+        
+        // Find the next element (pre[preIndex]) in post[] to divide the tree
+        int i;
+        for (i = l; i <= h; i++) {
+            if (post[i] == pre[preIndex]) break;
+        }
+        
+        // Build left and right subtrees
+        if (i <= h) {
+            root.left = construct(pre, post, l, i);
+            root.right = construct(pre, post, i + 1, h - 1);
+        }
+        
+        return root;
+    }
+}
