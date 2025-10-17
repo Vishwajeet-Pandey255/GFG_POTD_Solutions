@@ -1,0 +1,40 @@
+/*
+class Node{
+    int data;
+    Node left;
+    Node right;
+    Node(int data){
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+class Solution {
+    static int sum = 0;
+
+    public static void transformTree(Node root) {
+        sum = 0; // reset for each call
+        transform(root);
+    }
+
+    private static void transform(Node root) {
+        if (root == null) return;
+
+        // Traverse right subtree first (greater values)
+        transform(root.right);
+
+        // Store the current node's value
+        int originalValue = root.data;
+
+        // Replace with sum of greater nodes
+        root.data = sum;
+
+        // Update the running sum
+        sum += originalValue;
+
+        // Traverse left subtree (smaller values)
+        transform(root.left);
+    }
+}
