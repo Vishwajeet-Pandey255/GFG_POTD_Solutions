@@ -1,0 +1,55 @@
+/*
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+import java.util.*;
+
+class Solution {
+
+    // Count nodes (simple recursive)
+    private int countNodes(Node root) {
+        if (root == null) return 0;
+        return 1 + countNodes(root.left) + countNodes(root.right);
+    }
+
+    public int findMedian(Node root) {
+        if (root == null) return 0;
+
+        int n = countNodes(root);
+        // target index according to problem:
+        // if even -> V(n/2), if odd -> V((n+1)/2)
+        int target = (n % 2 == 0) ? (n / 2) : ((n + 1) / 2);
+
+        // Iterative inorder traversal using stack
+        Deque<Node> stack = new ArrayDeque<>();
+        Node curr = root;
+        int count = 0;
+
+        while (curr != null || !stack.isEmpty()) {
+            // go to leftmost
+            while (curr != null) {
+                stack.push(curr);
+                curr = curr.left;
+            }
+            curr = stack.pop();
+            count++;
+            if (count == target) {
+                return curr.data;
+            }
+            curr = curr.right;
+        }
+
+        // should never reach here for valid non-empty tree
+        return -1;
+    }
+}
