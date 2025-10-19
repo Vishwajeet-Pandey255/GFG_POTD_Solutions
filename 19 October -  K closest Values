@@ -1,0 +1,47 @@
+/*
+class Node {
+    int data;
+    Node left;
+    Node right;
+
+    Node(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+*/
+
+import java.util.*;
+
+class Solution {
+    public ArrayList<Integer> getKClosest(Node root, int target, int k) {
+        // Step 1: Do an inorder traversal to get sorted elements
+        ArrayList<Integer> inorderList = new ArrayList<>();
+        inorderTraversal(root, inorderList);
+
+        // Step 2: Sort based on closeness to target and value in case of tie
+        Collections.sort(inorderList, (a, b) -> {
+            int diffA = Math.abs(a - target);
+            int diffB = Math.abs(b - target);
+            if (diffA == diffB)
+                return a - b; // smaller one first in case of tie
+            return diffA - diffB;
+        });
+
+        // Step 3: Pick first k elements
+        ArrayList<Integer> result = new ArrayList<>();
+        for (int i = 0; i < k && i < inorderList.size(); i++) {
+            result.add(inorderList.get(i));
+        }
+
+        return result;
+    }
+
+    private void inorderTraversal(Node root, ArrayList<Integer> list) {
+        if (root == null) return;
+        inorderTraversal(root.left, list);
+        list.add(root.data);
+        inorderTraversal(root.right, list);
+    }
+}
