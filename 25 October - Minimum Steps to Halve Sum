@@ -1,0 +1,29 @@
+import java.util.*;
+
+class Solution {
+    public int minOperations(int[] arr) {
+        // Step 1: Calculate the initial sum
+        double sum = 0;
+        PriorityQueue<Double> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+        for (int num : arr) {
+            sum += num;
+            maxHeap.add((double) num);
+        }
+
+        double target = sum / 2.0;  // Step 2: Half of the original sum
+        double currentSum = sum;
+        int operations = 0;
+
+        // Step 3: Greedily halve the largest elements
+        while (currentSum > target) {
+            double largest = maxHeap.poll();   // get largest element
+            double half = largest / 2.0;
+            currentSum -= half;                // sum decreases by half of that element
+            maxHeap.add(half);                 // push halved value back
+            operations++;
+        }
+
+        return operations;
+    }
+}
