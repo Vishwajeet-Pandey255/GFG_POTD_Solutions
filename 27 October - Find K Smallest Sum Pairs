@@ -1,0 +1,34 @@
+import java.util.*;
+
+class Solution {
+    public ArrayList<ArrayList<Integer>> kSmallestPair(int[] arr1, int[] arr2, int k) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        if (arr1.length == 0 || arr2.length == 0) return result;
+
+        // Min-heap to store pairs with their sum
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> (a[0] + a[1]) - (b[0] + b[1]));
+
+        // Only take first k elements from arr1 to reduce work (since both are sorted)
+        for (int i = 0; i < Math.min(k, arr1.length); i++) {
+            minHeap.offer(new int[]{arr1[i], arr2[0], 0}); 
+            // {value from arr1, value from arr2, index in arr2}
+        }
+
+        while (k > 0 && !minHeap.isEmpty()) {
+            int[] current = minHeap.poll();
+            ArrayList<Integer> pair = new ArrayList<>();
+            pair.add(current[0]);
+            pair.add(current[1]);
+            result.add(pair);
+            k--;
+
+            int idx = current[2];
+            // If there is a next element in arr2, add the next pair
+            if (idx + 1 < arr2.length) {
+                minHeap.offer(new int[]{current[0], arr2[idx + 1], idx + 1});
+            }
+        }
+
+        return result;
+    }
+}
