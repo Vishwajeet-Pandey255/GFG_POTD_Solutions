@@ -1,0 +1,44 @@
+import java.util.*;
+
+class Solution {
+    public int maxEdgesToAdd(int V, int[][] edges) {
+        
+        List<List<Integer>> g = new ArrayList<>();
+        for(int i = 0; i < V; i++) g.add(new ArrayList<>());
+        
+        int[] indeg = new int[V];
+        for(int[] e : edges){
+            g.get(e[0]).add(e[1]);
+            indeg[e[1]]++;
+        }
+        
+        // Kahn Topo sort
+        Queue<Integer> q = new LinkedList<>();
+        for(int i=0;i<V;i++){
+            if(indeg[i]==0) q.add(i);
+        }
+        
+        int[] topo = new int[V];
+        int idx = 0;
+        
+        while(!q.isEmpty()){
+            int u = q.poll();
+            topo[u] = idx++;
+            for(int v : g.get(u)){
+                if(--indeg[v] == 0){
+                    q.add(v);
+                }
+            }
+        }
+        
+        // count edges that respect topo
+        int present = 0;
+        for(int[] e : edges){
+            if(topo[e[0]] < topo[e[1]]) present++;
+        }
+        
+        int totalPossible = V * (V - 1) / 2;
+        
+        return totalPossible - present;
+    }
+}
