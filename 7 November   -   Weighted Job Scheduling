@@ -1,0 +1,44 @@
+import java.util.*;
+
+class Solution {
+    public int maxProfit(int[][] jobs) {
+        // sort by end time
+        Arrays.sort(jobs, (a,b) -> a[1] - b[1]);
+        
+        int n = jobs.length;
+        int[] dp = new int[n];
+        
+        dp[0] = jobs[0][2]; // profit of first job
+        
+        for(int i=1; i<n; i++){
+            // include current job profit
+            int include = jobs[i][2];
+            
+            // find latest non-overlapping job using binary search
+            int l = binarySearch(jobs, i);
+            if(l != -1) include += dp[l];
+            
+            // dp[i] = max(include current job OR exclude
+            dp[i] = Math.max(dp[i-1], include);
+        }
+        
+        return dp[n-1];
+    }
+    
+    // returns index of last job that ends <= start time of job[i]
+    private int binarySearch(int[][] jobs, int i){
+        int low = 0, high = i-1;
+        int ans = -1;
+        
+        while(low <= high){
+            int mid = (low + high) / 2;
+            if(jobs[mid][1] <= jobs[i][0]){
+                ans = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+        return ans;
+    }
+}
