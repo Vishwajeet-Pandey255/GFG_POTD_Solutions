@@ -1,0 +1,21 @@
+class Solution {
+    public int maxProfit(int arr[]) {
+        int n = arr.length;
+        
+        int hold = -arr[0];   // buying on day 0
+        int sold = 0;         // sold today
+        int cool = 0;         // free state
+        
+        for(int i = 1; i < n; i++){
+            int newHold = Math.max(hold, cool - arr[i]);  // buy or continue holding
+            int newSold = hold + arr[i];                  // sell today
+            int newCool = Math.max(cool, sold);           // cooldown or continue cooldown
+            
+            hold = newHold;
+            sold = newSold;
+            cool = newCool;
+        }
+        
+        return Math.max(sold, cool);
+    }
+}
