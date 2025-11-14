@@ -1,0 +1,40 @@
+class Solution {
+    public static int mergeStones(int[] stones, int k) {
+        int n = stones.length;
+        
+        // Check if possible to end with 1 pile
+        if ((n - 1) % (k - 1) != 0) return -1;
+
+        // Prefix sum for fast range sum
+        int[] prefix = new int[n + 1];
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] = prefix[i] + stones[i];
+        }
+
+        // dp[i][j] = minimum cost to merge stones from i to j
+        int[][] dp = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                dp[i][j] = 0;
+
+        // Length of interval
+        for (int len = k; len <= n; len++) {
+            for (int i = 0; i + len <= n; i++) {
+                int j = i + len - 1;
+                dp[i][j] = Integer.MAX_VALUE / 2;
+
+                // We try splitting interval into valid blocks of size (k-1)
+                for (int mid = i; mid < j; mid += (k - 1)) {
+                    dp[i][j] = Math.min(dp[i][j], dp[i][mid] + dp[mid + 1][j]);
+                }
+
+                // If this range can be merged into 1 pile
+                if ((j - i) % (k - 1) == 0) {
+                    dp[i][j] += prefix[j + 1] - prefix[i];
+                }
+            }
+        }
+
+        return dp[0][n - 1];
+    }
+}
