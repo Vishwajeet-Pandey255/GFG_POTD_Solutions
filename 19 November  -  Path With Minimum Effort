@@ -1,0 +1,55 @@
+class Solution {
+    public int minCostPath(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        // Min-effort matrix
+        int[][] dist = new int[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                dist[i][j] = Integer.MAX_VALUE;
+            }
+        }
+
+        // Min-heap: [effort, row, col]
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+
+        dist[0][0] = 0;
+        pq.offer(new int[]{0, 0, 0});
+
+        int[] dx = {1, -1, 0, 0};
+        int[] dy = {0, 0, 1, -1};
+
+        while (!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            int effort = curr[0];
+            int x = curr[1];
+            int y = curr[2];
+
+            // If we reached bottom-right
+            if (x == n - 1 && y == m - 1)
+                return effort;
+
+            // Skip if we already have a better way
+            if (effort > dist[x][y]) continue;
+
+            // Explore neighbors
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dx[k];
+                int ny = y + dy[k];
+
+                if (nx >= 0 && ny >= 0 && nx < n && ny < m) {
+                    int cost = Math.abs(mat[x][y] - mat[nx][ny]);
+                    int newEffort = Math.max(effort, cost);
+
+                    if (newEffort < dist[nx][ny]) {
+                        dist[nx][ny] = newEffort;
+                        pq.offer(new int[]{newEffort, nx, ny});
+                    }
+                }
+            }
+        }
+
+        return dist[n - 1][m - 1];
+    }
+}
