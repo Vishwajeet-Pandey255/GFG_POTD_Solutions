@@ -1,0 +1,82 @@
+class Solution {
+    static class Pair {
+        int node;
+        long dist;
+        Pair(int n, long d) {
+            node = n;
+            dist = d;
+        }
+    }
+
+    public int shortestPath(int V, int a, int b, int[][] edges) {
+
+        // Build graph only for straight edges (w1)
+        ArrayList<ArrayList<Pair>> graph = new ArrayList<>();
+        for (int i = 0; i < V; i++) graph.add(new ArrayList<>());
+
+        for (int[] e : edges) {
+            int x = e[0], y = e[1];
+            int w1 = e[2];
+
+            graph.get(x).add(new Pair(y, w1));
+            graph.get(y).add(new Pair(x, w1));
+        }
+
+        // Dijkstra from a and from b
+        long[] da = dijkstra(graph, V, a);
+        long[] db = dijkstra(graph, V, b);
+
+        long ans = da[b]; // all straight edges case
+
+        // Try using 1 curved edge (w2)
+        for (int[] e : edges) {
+            int x = e[0], y = e[1];
+            int w2 = e[3];
+
+            // Path = a -> x (straight) + curved(x,y) + y -> b (straight)
+            if (da[x] != Long.MAX_VALUE && db[y] != Long.MAX_VALUE) {
+                ans = Math.min(ans, da[x] + w2 + db[y]);
+            }
+
+            // Path = a -> y + curved(y,x) + x -> b
+            if (da[y] != Long.MAX_VALUE && db[x] != Long.MAX_VALUE) {
+                ans = Math.min(ans, da[y] + w2 + db[x]);
+            }
+        }
+
+        return ans == Long.MAX_VALUE ? -1 : (int) ans;
+    }
+
+    // Standard Dijkstra using PriorityQueue
+    private long[] dijkstra(ArrayList<ArrayList<Pair>> graph, int V, int src) {
+
+        long[] dist = new long[V];
+        Arrays.fill(dist, Long.MAX_VALUE);
+
+        PriorityQueue<Pair> pq =
+            new PriorityQueue<>((a, b) -> Long.compare(a.dist, b.dist));
+
+        dist[src] = 0;
+        pq.add(new Pair(src, 0));
+
+        while (!pq.isEmpty()) {
+            Pair curr = pq.poll();
+            int node = curr.node;
+            long d = curr.dist;
+
+            if (d > dist[node]) continue;
+
+            for (Pair nei : graph.get(node)) {
+                int nxt = nei.node;
+                long w = nei.dist;
+
+                if (dist[nxt] > d + w) {
+                    dist[nxt] = d + w;
+                    pq.add(new Pair(nxt, dist[nxt]));
+                }
+            }
+        }
+
+        return dist;
+    }
+}
