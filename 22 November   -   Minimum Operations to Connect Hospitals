@@ -1,0 +1,68 @@
+class Solution {
+
+    // Find with path compression
+    private int find(int[] parent, int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent, parent[x]);
+        return parent[x];
+    }
+
+    // Union by rank
+    private void union(int[] parent, int[] rank, int a, int b) {
+        int pa = find(parent, a);
+        int pb = find(parent, b);
+
+        if (pa == pb) return;
+
+        if (rank[pa] < rank[pb]) {
+            parent[pa] = pb;
+        } else if (rank[pb] < rank[pa]) {
+            parent[pb] = pa;
+        } else {
+            parent[pb] = pa;
+            rank[pa]++;
+        }
+    }
+
+    public int minConnect(int V, int[][] edges) {
+
+        int[] parent = new int[V];
+        int[] rank = new int[V];
+
+        for (int i = 0; i < V; i++) parent[i] = i;
+
+        int E = edges.length;
+
+        // 1. Build DSU, count cycles
+        int extraEdges = 0;
+
+        for (int[] e : edges) {
+            int u = e[0], v = e[1];
+
+            int pu = find(parent, u);
+            int pv = find(parent, v);
+
+            if (pu == pv) {
+                // This is a cycle → extra edge available
+                extraEdges++;
+            } else {
+                union(parent, rank, u, v);
+            }
+        }
+
+        // 2. Count distinct components
+        int components = 0;
+        for (int i = 0; i < V; i++) {
+            if (parent[i] == i) components++;
+        }
+
+        // 3. We need (components - 1) edges to connect all
+        int required = components - 1;
+
+        // 4. Check if extra edges are enough
+        if (extraEdges >= required)
+            return required;
+
+        return -1;
+    }
+}
