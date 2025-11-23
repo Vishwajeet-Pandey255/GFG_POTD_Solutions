@@ -1,0 +1,64 @@
+class Solution {
+
+    class DSU {
+        int parent[];
+        int size[];
+
+        DSU(int n) {
+            parent = new int[n];
+            size = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+                size[i] = 1;
+            }
+        }
+
+        int find(int x) {
+            if (x == parent[x]) return x;
+            return parent[x] = find(parent[x]);
+        }
+
+        void union(int x, int y) {
+            int rx = find(x);
+            int ry = find(y);
+            if (rx != ry) {
+                if (size[rx] < size[ry]) {
+                    parent[rx] = ry;
+                    size[ry] += size[rx];
+                } else {
+                    parent[ry] = rx;
+                    size[rx] += size[ry];
+                }
+            }
+        }
+    }
+
+    public int maxRemove(int[][] stones) {
+
+        int maxRow = 10000;   // given constraints
+        int maxCol = 10000;   // given constraints
+
+        // DSU size = rows + cols
+        DSU dsu = new DSU(maxRow + maxCol + 5);
+
+        // To track unique roots used
+        HashSet<Integer> used = new HashSet<>();
+
+        for (int[] s : stones) {
+            int r = s[0];
+            int c = s[1] + 10001;  // shift column index
+            dsu.union(r, c);
+            used.add(r);
+            used.add(c);
+        }
+
+        // count number of connected components
+        int components = 0;
+        for (int node : used) {
+            if (dsu.find(node) == node)
+                components++;
+        }
+
+        return stones.length - components;
+    }
+}
