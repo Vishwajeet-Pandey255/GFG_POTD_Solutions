@@ -1,0 +1,59 @@
+class Solution {
+
+    // Trie node
+    static class TrieNode {
+        TrieNode[] child = new TrieNode[2];
+        int cnt = 0;
+    }
+    
+    TrieNode root = new TrieNode();
+
+    // Insert number in trie
+    void insert(int num) {
+        TrieNode curr = root;
+        for (int i = 15; i >= 0; i--) {  // arr[i] ≤ 50000 (needs 16 bits)
+            int bit = (num >> i) & 1;
+            if (curr.child[bit] == null) {
+                curr.child[bit] = new TrieNode();
+            }
+            curr = curr.child[bit];
+            curr.cnt++;
+        }
+    }
+
+    // Count numbers already in trie such that (num XOR x) < k
+    int countLess(int num, int k) {
+        TrieNode curr = root;
+        int ans = 0;
+        
+        for (int i = 15; i >= 0; i--) {
+            if (curr == null) break;
+
+            int nBit = (num >> i) & 1;
+            int kBit = (k >> i) & 1;
+
+            if (kBit == 1) {
+                // If kBit is 1, we can take the branch equal to nBit (XOR gives 0 < 1)
+                if (curr.child[nBit] != null) {
+                    ans += curr.child[nBit].cnt;
+                }
+                // Move to opposite bit branch because XOR gives 1
+                curr = curr.child[nBit ^ 1];
+            } else {
+                // Can only go to branch where XOR results 0 (must be < 1)
+                curr = curr.child[nBit];
+            }
+        }
+        return ans;
+    }
+
+    public int cntPairs(int[] arr, int k) {
+        int ans = 0;
+
+        for (int num : arr) {
+            ans += countLess(num, k); // count pairs with previously inserted numbers
+            insert(num);              // then insert current number
+        }
+        return ans;
+    }
+}
