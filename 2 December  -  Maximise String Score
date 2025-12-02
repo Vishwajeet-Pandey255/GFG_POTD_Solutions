@@ -1,0 +1,63 @@
+import java.util.*;
+
+class Solution {
+    public int maxScore(String s, char[][] jumps) {
+        int n = s.length();
+
+        // allowed transitions matrix
+        boolean[][] allow = new boolean[256][256];
+        for (char[] j : jumps) {
+            allow[j[0]][j[1]] = true;
+        }
+
+        // prefix sum of ASCII values: pref[k] = sum of s[0..k-1]
+        long[] pref = new long[n + 1];
+        for (int i = 0; i < n; i++) pref[i + 1] = pref[i] + s.charAt(i);
+
+        // prefix counts pc[c][k] = number of char c in s[0..k-1]
+        int[][] pc = new int[256][n + 1];
+        for (int c = 0; c < 256; c++) {
+            for (int i = 0; i < n; i++) {
+                pc[c][i + 1] = pc[c][i] + (s.charAt(i) == c ? 1 : 0);
+            }
+        }
+
+        // bestForChar[c] = max over j>i of (dp[j] + pref[j] - ascii(c)*pc[c][j])
+        // initialize with very small value
+        long NEG = Long.MIN_VALUE / 4;
+        long[] bestForChar = new long[256];
+        Arrays.fill(bestForChar, NEG);
+
+        long[] dp = new long[n];
+
+        // iterate from right to left
+        for (int i = n - 1; i >= 0; i--) {
+            int from = s.charAt(i);
+            long best = 0; // default 0 if no valid jump
+
+            // consider same-character jumps (always allowed)
+            int c = from;
+            if (bestForChar[c] != NEG) {
+                long candidate = bestForChar[c] - (pref[i] - (long)c * pc[c][i]);
+                if (candidate > best) best = candidate;
+            }
+
+            // consider allowed transitions from 'from' to c
+            for (c = 0; c < 256; c++) {
+                if (!allow[from][c]) continue;
+                if (bestForChar[c] == NEG) continue;
+                long candidate = bestForChar[c] - (pref[i] - (long)c * pc[c][i]);
+                if (candidate > best) best = candidate;
+            }
+
+            dp[i] = best;
+
+            // now update bestForChar for character s[i], so earlier positions can jump to i
+            int ch = from;
+            long valForThisPos = dp[i] + pref[i] - (long)ch * pc[ch][i];
+            if (valForThisPos > bestForChar[ch]) bestForChar[ch] = valForThisPos;
+        }
+
+        return (int) dp[0];
+    }
+}
