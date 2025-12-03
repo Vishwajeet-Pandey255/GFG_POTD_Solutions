@@ -1,0 +1,44 @@
+class Solution {
+    public int tsp(int[][] cost) {
+        int n = cost.length;
+        int fullMask = (1 << n) - 1;
+
+        // dp[mask][i] -> minimum cost to reach city i with visited set mask
+        int[][] dp = new int[1 << n][n];
+
+        // initialize dp array with -1 (uncomputed)
+        for (int i = 0; i < (1 << n); i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j] = -1;
+            }
+        }
+
+        return solve(1, 0, cost, dp, fullMask, n);  // start with city 0 visited
+    }
+
+    private int solve(int mask, int pos, int[][] cost, int[][] dp, int fullMask, int n) {
+        
+        // If all cities have been visited -> return cost to go back to city 0
+        if (mask == fullMask) {
+            return cost[pos][0];
+        }
+
+        if (dp[mask][pos] != -1) {
+            return dp[mask][pos];
+        }
+
+        int ans = Integer.MAX_VALUE;
+
+        // Try visiting every unvisited city
+        for (int city = 0; city < n; city++) {
+            if ((mask & (1 << city)) == 0) {  // city not visited
+                int newMask = mask | (1 << city);
+                int newCost = cost[pos][city] + solve(newMask, city, cost, dp, fullMask, n);
+                ans = Math.min(ans, newCost);
+            }
+        }
+
+        dp[mask][pos] = ans;
+        return ans;
+    }
+}
