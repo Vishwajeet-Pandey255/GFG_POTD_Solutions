@@ -1,0 +1,45 @@
+class Solution {
+    public int minCost(int keys[], int freq[]) {
+        int n = keys.length;
+        
+        // dp[i][j] = minimum cost of BST formed from keys[i..j]
+        int[][] dp = new int[n][n];
+        
+        // prefix sum of frequencies for fast range sum calculation
+        int[] prefix = new int[n+1];
+        for (int i = 0; i < n; i++) {
+            prefix[i+1] = prefix[i] + freq[i];
+        }
+        
+        // function to get sum of freq[i..j]
+        java.util.function.BiFunction<Integer, Integer, Integer> sum = 
+            (i, j) -> prefix[j+1] - prefix[i];
+        
+        // gap-based DP
+        for (int g = 0; g < n; g++) {
+            for (int i = 0; i + g < n; i++) {
+                int j = i + g;
+                if (i == j) {
+                    dp[i][j] = freq[i]; // cost = freq * level(1)
+                } else {
+                    int minCost = Integer.MAX_VALUE;
+                    
+                    // try making each key from i..j root
+                    for (int r = i; r <= j; r++) {
+                        int left = (r == i) ? 0 : dp[i][r - 1];
+                        int right = (r == j) ? 0 : dp[r + 1][j];
+                        int cost = left + right;
+                        
+                        if (cost < minCost)
+                            minCost = cost;
+                    }
+                    
+                    // add total frequency sum since all nodes move down one level
+                    dp[i][j] = minCost + sum.apply(i, j);
+                }
+            }
+        }
+        
+        return dp[0][n - 1];
+    }
+}
