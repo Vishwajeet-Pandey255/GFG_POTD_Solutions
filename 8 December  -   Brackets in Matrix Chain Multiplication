@@ -1,0 +1,43 @@
+class Solution {
+    public String matrixChainOrder(int arr[]) {
+        int n = arr.length;
+
+        // dp[i][j] = minimum cost to multiply matrices from i to j
+        int dp[][] = new int[n][n];
+
+        // bracket[i][j] = index at which final multiplication happens for segment (i..j)
+        int bracket[][] = new int[n][n];
+
+        // l = chain length
+        for (int l = 2; l < n; l++) {
+            for (int i = 1; i < n - l + 1; i++) {
+                int j = i + l - 1;
+
+                dp[i][j] = Integer.MAX_VALUE;
+
+                for (int k = i; k < j; k++) {
+                    int cost = dp[i][k] + dp[k + 1][j] + arr[i - 1] * arr[k] * arr[j];
+
+                    if (cost < dp[i][j]) {
+                        dp[i][j] = cost;
+                        bracket[i][j] = k;
+                    }
+                }
+            }
+        }
+
+        // Now generate final parenthesization string
+        return build(1, n - 1, bracket);
+    }
+
+    // Recursive function for constructing parenthesization string
+    private String build(int i, int j, int[][] bracket) {
+        if (i == j) {
+            // Matrices are A, B, C... so A=1, B=2...
+            return Character.toString((char) ('A' + i - 1));
+        }
+
+        int k = bracket[i][j];
+        return "(" + build(i, k, bracket) + build(k + 1, j, bracket) + ")";
+    }
+}
