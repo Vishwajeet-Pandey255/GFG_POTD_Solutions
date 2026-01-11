@@ -1,0 +1,40 @@
+import java.util.Arrays;
+
+class Solution {
+    public String minWindow(String s1, String s2) {
+        int n = s1.length();
+        int m = s2.length();
+        if (m > n) return "";
+
+        int[] dp = new int[m];       // dp[j] = start index in s1 of subsequence matching s2[0..j]
+        Arrays.fill(dp, -1);
+
+        int minLen = Integer.MAX_VALUE;
+        int start = -1;
+
+        for (int i = 0; i < n; i++) {
+            // iterate s2 backwards so dp[j-1] is from previous state (or earlier in this i)
+            for (int j = m - 1; j >= 0; j--) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    if (j == 0) {
+                        dp[0] = i;          // subsequence of length 1 starts at i
+                    } else {
+                        dp[j] = dp[j - 1]; // extend the previous subsequence start
+                    }
+                }
+                // if not equal, dp[j] remains as before (could be -1 or earlier start)
+            }
+
+            // if we have a subsequence matching full s2 ending at i
+            if (dp[m - 1] != -1) {
+                int len = i - dp[m - 1] + 1;
+                if (len < minLen) {
+                    minLen = len;
+                    start = dp[m - 1];
+                }
+            }
+        }
+
+        return start == -1 ? "" : s1.substring(start, start + minLen);
+    }
+}
