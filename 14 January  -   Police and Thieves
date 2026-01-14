@@ -1,0 +1,36 @@
+class Solution {
+    public int catchThieves(char[] arr, int k) {
+        int n = arr.length;
+        
+        // Store indices of police and thieves
+        int[] police = new int[n];
+        int[] thieves = new int[n];
+        
+        int pCount = 0, tCount = 0;
+        
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == 'P') {
+                police[pCount++] = i;
+            } else {
+                thieves[tCount++] = i;
+            }
+        }
+        
+        int i = 0, j = 0, caught = 0;
+        
+        // Two pointer technique
+        while (i < pCount && j < tCount) {
+            if (Math.abs(police[i] - thieves[j]) <= k) {
+                caught++;
+                i++;
+                j++;
+            } else if (police[i] < thieves[j]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+        
+        return caught;
+    }
+}
