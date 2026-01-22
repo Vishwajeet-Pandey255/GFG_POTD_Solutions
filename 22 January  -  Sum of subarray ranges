@@ -1,0 +1,73 @@
+import java.util.*;
+
+class Solution {
+    public int subarrayRanges(int[] arr) {
+        int n = arr.length;
+        long sumMax = 0, sumMin = 0;
+
+        int[] leftGreater = new int[n];
+        int[] rightGreater = new int[n];
+        int[] leftSmaller = new int[n];
+        int[] rightSmaller = new int[n];
+
+        Stack<Integer> stack = new Stack<>();
+
+        // Previous Greater Element
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && arr[stack.peek()] <= arr[i]) {
+                stack.pop();
+            }
+            leftGreater[i] = stack.isEmpty() ? -1 : stack.peek();
+            stack.push(i);
+        }
+
+        stack.clear();
+
+        // Next Greater Element
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && arr[stack.peek()] < arr[i]) {
+                stack.pop();
+            }
+            rightGreater[i] = stack.isEmpty() ? n : stack.peek();
+            stack.push(i);
+        }
+
+        stack.clear();
+
+        // Previous Smaller Element
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && arr[stack.peek()] >= arr[i]) {
+                stack.pop();
+            }
+            leftSmaller[i] = stack.isEmpty() ? -1 : stack.peek();
+            stack.push(i);
+        }
+
+        stack.clear();
+
+        // Next Smaller Element
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && arr[stack.peek()] > arr[i]) {
+                stack.pop();
+            }
+            rightSmaller[i] = stack.isEmpty() ? n : stack.peek();
+            stack.push(i);
+        }
+
+        // Contribution as maximum
+        for (int i = 0; i < n; i++) {
+            long left = i - leftGreater[i];
+            long right = rightGreater[i] - i;
+            sumMax += arr[i] * left * right;
+        }
+
+        // Contribution as minimum
+        for (int i = 0; i < n; i++) {
+            long left = i - leftSmaller[i];
+            long right = rightSmaller[i] - i;
+            sumMin += arr[i] * left * right;
+        }
+
+        return (int)(sumMax - sumMin);
+    }
+}
