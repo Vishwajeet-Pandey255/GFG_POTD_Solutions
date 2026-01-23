@@ -1,0 +1,46 @@
+import java.util.*;
+
+class Solution {
+    public int maxPeople(int[] arr) {
+        int n = arr.length;
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        Stack<int[]> st = new Stack<>(); // {height, count}
+
+        // LEFT SIDE VISIBILITY
+        for (int i = 0; i < n; i++) {
+            int seen = 0;
+
+            while (!st.isEmpty() && st.peek()[0] < arr[i]) {
+                seen += st.peek()[1];
+                st.pop();
+            }
+
+            left[i] = seen;
+            st.push(new int[]{arr[i], seen + 1});
+        }
+
+        st.clear();
+
+        // RIGHT SIDE VISIBILITY
+        for (int i = n - 1; i >= 0; i--) {
+            int seen = 0;
+
+            while (!st.isEmpty() && st.peek()[0] < arr[i]) {
+                seen += st.peek()[1];
+                st.pop();
+            }
+
+            right[i] = seen;
+            st.push(new int[]{arr[i], seen + 1});
+        }
+
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            ans = Math.max(ans, left[i] + right[i] + 1);
+        }
+
+        return ans;
+    }
+}
