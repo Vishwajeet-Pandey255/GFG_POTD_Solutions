@@ -1,0 +1,43 @@
+import java.util.*;
+
+class Solution {
+    public int countSubset(int[] arr, int k) {
+        int n = arr.length;
+        int mid = n / 2;
+
+        // Split array
+        int[] left = Arrays.copyOfRange(arr, 0, mid);
+        int[] right = Arrays.copyOfRange(arr, mid, n);
+
+        // Store sum frequencies of left subsets
+        HashMap<Integer, Integer> map = new HashMap<>();
+        generateSums(left, 0, 0, map);
+
+        // Count matching subsets from right side
+        return countMatches(right, 0, 0, k, map);
+    }
+
+    private void generateSums(int[] arr, int idx, int sum, HashMap<Integer, Integer> map) {
+        if (idx == arr.length) {
+            map.put(sum, map.getOrDefault(sum, 0) + 1);
+            return;
+        }
+
+        // Exclude current element
+        generateSums(arr, idx + 1, sum, map);
+
+        // Include current element
+        generateSums(arr, idx + 1, sum + arr[idx], map);
+    }
+
+    private int countMatches(int[] arr, int idx, int sum, int k, HashMap<Integer, Integer> map) {
+        if (idx == arr.length) {
+            return map.getOrDefault(k - sum, 0);
+        }
+
+        int exclude = countMatches(arr, idx + 1, sum, k, map);
+        int include = countMatches(arr, idx + 1, sum + arr[idx], k, map);
+
+        return exclude + include;
+    }
+}
