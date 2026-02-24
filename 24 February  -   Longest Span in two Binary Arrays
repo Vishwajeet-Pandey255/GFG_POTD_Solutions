@@ -1,0 +1,35 @@
+import java.util.*;
+
+class Solution {
+    public int equalSumSpan(int[] a1, int[] a2) {
+        int n = a1.length;
+        
+        // Map to store first occurrence of prefix difference
+        HashMap<Integer, Integer> map = new HashMap<>();
+        
+        int prefixDiff = 0;
+        int maxLen = 0;
+        
+        for (int i = 0; i < n; i++) {
+            
+            // Update prefix difference
+            prefixDiff += (a1[i] - a2[i]);
+            
+            // If prefixDiff is 0, span is from 0 to i
+            if (prefixDiff == 0) {
+                maxLen = i + 1;
+            }
+            
+            // If prefixDiff seen before, calculate span
+            if (map.containsKey(prefixDiff)) {
+                int prevIndex = map.get(prefixDiff);
+                maxLen = Math.max(maxLen, i - prevIndex);
+            } else {
+                // Store first occurrence only
+                map.put(prefixDiff, i);
+            }
+        }
+        
+        return maxLen;
+    }
+}
