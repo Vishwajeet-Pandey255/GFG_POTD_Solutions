@@ -1,0 +1,39 @@
+import java.util.*;
+
+class Solution {
+    public int longestSubarray(int[] arr, int k) {
+        int n = arr.length;
+        
+        // Convert array into +1 and -1 form
+        int prefixSum = 0;
+        int maxLen = 0;
+        
+        HashMap<Integer, Integer> map = new HashMap<>();
+        
+        for (int i = 0; i < n; i++) {
+            
+            if (arr[i] > k) {
+                prefixSum += 1;
+            } else {
+                prefixSum -= 1;
+            }
+            
+            // If prefix sum is positive, whole subarray from 0 to i is valid
+            if (prefixSum > 0) {
+                maxLen = i + 1;
+            }
+            
+            // If prefixSum not seen before, store its first occurrence
+            if (!map.containsKey(prefixSum)) {
+                map.put(prefixSum, i);
+            }
+            
+            // Check if there exists prefixSum - 1
+            if (map.containsKey(prefixSum - 1)) {
+                maxLen = Math.max(maxLen, i - map.get(prefixSum - 1));
+            }
+        }
+        
+        return maxLen;
+    }
+}
