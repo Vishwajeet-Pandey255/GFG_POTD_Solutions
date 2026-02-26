@@ -1,0 +1,35 @@
+class Solution {
+    public boolean areIsomorphic(String s1, String s2) {
+        
+        if (s1.length() != s2.length()) {
+            return false;
+        }
+        
+        char[] map = new char[26];
+        
+        boolean[] used = new boolean[26];
+        
+        for (int i = 0; i < s1.length(); i++) {
+            char c1 = s1.charAt(i);
+            char c2 = s2.charAt(i);
+            
+            int index1 = c1 - 'a';
+            int index2 = c2 - 'a';
+            
+            if (map[index1] == 0) {
+                
+                if (used[index2]) {
+                    return false;
+                }
+                
+                map[index1] = c2;
+                used[index2] = true;
+            }
+            else if (map[index1] != c2) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
