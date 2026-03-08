@@ -1,0 +1,33 @@
+class Solution {
+    boolean pythagoreanTriplet(int[] arr) {
+        
+        int MAX = 1000;
+        int[] freq = new int[MAX + 1];
+        
+        for(int num : arr){
+            freq[num]++;
+        }
+        
+        for(int a = 1; a <= MAX; a++){
+            if(freq[a] == 0) continue;
+            
+            for(int b = a; b <= MAX; b++){
+                if(freq[b] == 0) continue;
+                
+                int sum = a*a + b*b;
+                int c = (int)Math.sqrt(sum);
+                
+                if(c <= MAX && c*c == sum && freq[c] > 0){
+                    
+                    if(a == b && freq[a] < 2) continue;
+                    if(a == c && freq[a] < 2) continue;
+                    if(b == c && freq[b] < 2) continue;
+                    
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+}
