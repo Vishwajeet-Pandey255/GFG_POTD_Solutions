@@ -1,0 +1,58 @@
+import java.util.*;
+
+class Solution {
+    public int countPaths(int V, int[][] edges) {
+        
+        // Step 1: Create adjacency list
+        List<List<int[]>> adj = new ArrayList<>();
+        for (int i = 0; i < V; i++) adj.add(new ArrayList<>());
+        
+        for (int[] e : edges) {
+            adj.get(e[0]).add(new int[]{e[1], e[2]});
+            adj.get(e[1]).add(new int[]{e[0], e[2]});
+        }
+        
+        // Step 2: Min Heap -> {distance, node}
+        PriorityQueue<long[]> pq = new PriorityQueue<>((a, b) -> Long.compare(a[0], b[0]));
+        
+        long[] dist = new long[V];
+        Arrays.fill(dist, Long.MAX_VALUE);
+        
+        long[] ways = new long[V];
+        
+        int MOD = (int)1e9 + 7;
+        
+        // Initialize
+        dist[0] = 0;
+        ways[0] = 1;
+        pq.add(new long[]{0, 0});
+        
+        // Step 3: Dijkstra
+        while (!pq.isEmpty()) {
+            long[] curr = pq.poll();
+            long d = curr[0];
+            int node = (int) curr[1];
+            
+            if (d > dist[node]) continue;
+            
+            for (int[] neighbor : adj.get(node)) {
+                int adjNode = neighbor[0];
+                long weight = neighbor[1];
+                
+                // Found shorter path
+                if (d + weight < dist[adjNode]) {
+                    dist[adjNode] = d + weight;
+                    ways[adjNode] = ways[node];
+                    pq.add(new long[]{dist[adjNode], adjNode});
+                }
+                
+                // Found another shortest path
+                else if (d + weight == dist[adjNode]) {
+                    ways[adjNode] = (ways[adjNode] + ways[node]) % MOD;
+                }
+            }
+        }
+        
+        return (int)(ways[V - 1] % MOD);
+    }
+}
