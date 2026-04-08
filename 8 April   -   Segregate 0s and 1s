@@ -1,0 +1,27 @@
+class Solution {
+    void segregate0and1(int[] arr) {
+        int left = 0, right = arr.length - 1;
+        
+        while (left < right) {
+            // Move left pointer if element is 0
+            while (left < right && arr[left] == 0) {
+                left++;
+            }
+            
+            // Move right pointer if element is 1
+            while (left < right && arr[right] == 1) {
+                right--;
+            }
+            
+            // Swap if needed
+            if (left < right) {
+                int temp = arr[left];
+                arr[left] = arr[right];
+                arr[right] = temp;
+                
+                left++;
+                right--;
+            }
+        }
+    }
+}
