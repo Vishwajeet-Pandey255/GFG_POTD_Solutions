@@ -1,0 +1,59 @@
+class Solution {
+    static int[] nextPalindrome(int[] num) {
+        int n = num.length;
+
+        // 🔴 Step 0: Check if all digits are 9
+        boolean allNine = true;
+        for (int x : num) {
+            if (x != 9) {
+                allNine = false;
+                break;
+            }
+        }
+
+        if (allNine) {
+            int[] res = new int[n + 1];
+            res[0] = 1;
+            res[n] = 1;
+            return res;
+        }
+
+        int[] ans = num.clone();
+
+        // Step 1: Mirror left to right
+        for (int i = 0; i < n / 2; i++) {
+            ans[n - 1 - i] = ans[i];
+        }
+
+        // Step 2: Check if mirrored > original
+        boolean greater = false;
+        for (int i = 0; i < n; i++) {
+            if (ans[i] > num[i]) {
+                greater = true;
+                break;
+            } else if (ans[i] < num[i]) {
+                break;
+            }
+        }
+
+        if (greater) return ans;
+
+        // Step 3: Increment middle
+        int carry = 1;
+        int mid = (n - 1) / 2;
+
+        while (mid >= 0 && carry > 0) {
+            int sum = ans[mid] + carry;
+            ans[mid] = sum % 10;
+            carry = sum / 10;
+            mid--;
+        }
+
+        // Step 4: Mirror again
+        for (int i = 0; i < n / 2; i++) {
+            ans[n - 1 - i] = ans[i];
+        }
+
+        return ans;
+    }
+}
