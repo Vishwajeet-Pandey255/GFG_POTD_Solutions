@@ -1,0 +1,26 @@
+class Solution {
+    static ArrayList<Integer> kthLargest(int[] arr, int k) {
+        ArrayList<Integer> ans = new ArrayList<>();
+        
+        // Min Heap to store k largest elements
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        
+        for (int num : arr) {
+            pq.offer(num);
+            
+            // Keep only k largest elements
+            if (pq.size() > k) {
+                pq.poll();
+            }
+            
+            // If less than k elements, kth largest doesn't exist
+            if (pq.size() < k) {
+                ans.add(-1);
+            } else {
+                ans.add(pq.peek());
+            }
+        }
+        
+        return ans;
+    }
+}
