@@ -1,0 +1,21 @@
+class Solution {
+    
+    ArrayList<Integer> sortBySetBitCount(int[] arr) {
+        
+        ArrayList<Integer> list = new ArrayList<>();
+        
+        for (int num : arr) {
+            list.add(num);
+        }
+        
+        // Stable sort by set bit count in descending order
+        Collections.sort(list, (a, b) -> {
+            int countA = Integer.bitCount(a);
+            int countB = Integer.bitCount(b);
+            
+            return countB - countA;
+        });
+        
+        return list;
+    }
+}
