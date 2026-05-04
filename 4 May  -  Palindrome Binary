@@ -1,0 +1,22 @@
+class Solution {
+    public boolean isBinaryPalindrome(int n) {
+        int left = 31;
+        int right = 0;
+
+        // Find actual MSB
+        while (((n >> left) & 1) == 0) {
+            left--;
+        }
+
+        // Compare bits
+        while (left > right) {
+            if (((n >> left) & 1) != ((n >> right) & 1)) {
+                return false;
+            }
+            left--;
+            right++;
+        }
+
+        return true;
+    }
+}
