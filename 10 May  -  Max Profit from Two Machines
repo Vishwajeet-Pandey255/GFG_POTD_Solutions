@@ -1,0 +1,35 @@
+class Solution {
+    public int maxProfit(int x, int y, int[] a, int[] b) {
+        int n = a.length;
+
+        // Store difference along with profits
+        int[][] tasks = new int[n][3];
+
+        for (int i = 0; i < n; i++) {
+            tasks[i][0] = Math.abs(a[i] - b[i]); // difference
+            tasks[i][1] = a[i];
+            tasks[i][2] = b[i];
+        }
+
+        // Sort by descending absolute difference
+        Arrays.sort(tasks, (p1, p2) -> p2[0] - p1[0]);
+
+        int profit = 0;
+
+        for (int i = 0; i < n; i++) {
+            int profitA = tasks[i][1];
+            int profitB = tasks[i][2];
+
+            // Assign task greedily
+            if ((profitA >= profitB && x > 0) || y == 0) {
+                profit += profitA;
+                x--;
+            } else {
+                profit += profitB;
+                y--;
+            }
+        }
+
+        return profit;
+    }
+}
