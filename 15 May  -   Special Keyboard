@@ -1,0 +1,32 @@
+class Solution {
+    public int optimalKeys(int n) {
+        // For small values, pressing 'A' is optimal
+        if (n <= 6) {
+            return n;
+        }
+
+        int[] dp = new int[n + 1];
+
+        // Base cases
+        for (int i = 0; i <= 6 && i <= n; i++) {
+            dp[i] = i;
+        }
+
+        // Calculate maximum A's for each keystroke count
+        for (int i = 7; i <= n; i++) {
+            dp[i] = 0;
+
+            // Try all possible breakpoints
+            for (int j = i - 3; j >= 1; j--) {
+                // After j operations:
+                // Ctrl+A, Ctrl+C take 2 operations
+                // Remaining (i - j - 2) operations are Ctrl+V
+                int curr = dp[j] * (i - j - 1);
+
+                dp[i] = Math.max(dp[i], curr);
+            }
+        }
+
+        return dp[n];
+    }
+}
