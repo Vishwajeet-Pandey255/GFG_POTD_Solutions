@@ -1,0 +1,20 @@
+class Solution {
+    public int findSmallest(int[] arr) {
+        Arrays.sort(arr);
+
+        long smallest = 1;
+
+        for (int num : arr) {
+            // If current number is greater than the
+            // smallest value we cannot form
+            if (num > smallest) {
+                return (int) smallest;
+            }
+
+            // Extend the range of possible sums
+            smallest += num;
+        }
+
+        return (int) smallest;
+    }
+}
