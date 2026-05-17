@@ -1,0 +1,18 @@
+class Solution {
+    List<Integer> makeBeautiful(int[] arr) {
+        // code here
+        Stack<Integer> st = new Stack<>();
+        
+        for (int num : arr) {
+            
+            // If stack is not empty and top element has opposite sign
+            if (!st.isEmpty() && ((st.peek() >= 0 && num < 0) || (st.peek() < 0 && num >= 0))) {
+                st.pop();
+            } else {
+                st.push(num);
+            }
+        }
+        
+        return new ArrayList<>(st);
+    }
+}
