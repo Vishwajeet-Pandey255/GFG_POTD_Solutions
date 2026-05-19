@@ -1,0 +1,44 @@
+class Solution {
+    public int minSteps(int[] arr, int start, int end) {
+        
+        // If start is already equal to end
+        if (start == end) return 0;
+
+        int[] dist = new int[1000];
+
+        // Initialize distances with a large value
+        for (int i = 0; i < 1000; i++) {
+            dist[i] = Integer.MAX_VALUE;
+        }
+
+        java.util.Queue<Integer> q = new java.util.LinkedList<>();
+
+        q.offer(start);
+        dist[start] = 0;
+
+        while (!q.isEmpty()) {
+
+            int current = q.poll();
+
+            for (int num : arr) {
+
+                int next = (current * num) % 1000;
+
+                // If a shorter path is found
+                if (dist[current] + 1 < dist[next]) {
+
+                    dist[next] = dist[current] + 1;
+
+                    // If end is reached
+                    if (next == end) {
+                        return dist[next];
+                    }
+
+                    q.offer(next);
+                }
+            }
+        }
+
+        return -1;
+    }
+}
