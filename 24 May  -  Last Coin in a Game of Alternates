@@ -1,0 +1,18 @@
+class Solution {
+    public int coin(int[] arr) {
+        int left = 0;
+        int right = arr.length - 1;
+
+        // Keep removing coins greedily
+        while (left < right) {
+            if (arr[left] >= arr[right]) {
+                left++;   // remove left coin
+            } else {
+                right--;  // remove right coin
+            }
+        }
+
+        // Last remaining coin
+        return arr[left];
+    }
+}
