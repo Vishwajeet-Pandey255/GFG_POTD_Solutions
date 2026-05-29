@@ -1,0 +1,40 @@
+class Solution {
+    public int validGroups(String s) {
+        int n = s.length();
+        
+        // Maximum possible sum = 9 * 100 = 900
+        int[][] dp = new int[n + 1][901];
+        
+        return solve(0, 0, s, dp);
+    }
+    
+    private int solve(int index, int prevSum, String s, int[][] dp) {
+        int n = s.length();
+        
+        // If reached end, one valid grouping found
+        if (index == n) {
+            return 1;
+        }
+        
+        // Memoization
+        if (dp[index][prevSum] != 0) {
+            return dp[index][prevSum];
+        }
+        
+        int count = 0;
+        int currentSum = 0;
+        
+        // Try all possible substrings starting from index
+        for (int i = index; i < n; i++) {
+            currentSum += s.charAt(i) - '0';
+            
+            // Valid only if current sum >= previous sum
+            if (currentSum >= prevSum) {
+                count += solve(i + 1, currentSum, s, dp);
+            }
+        }
+        
+        dp[index][prevSum] = count;
+        return count;
+    }
+}
