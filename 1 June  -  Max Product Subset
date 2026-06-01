@@ -1,0 +1,50 @@
+class Solution {
+    public int findMaxProduct(int[] arr) {
+        long MOD = 1000000007L;
+        int n = arr.length;
+
+        if (n == 1) return arr[0];
+
+        int negCount = 0, zeroCount = 0;
+        int maxNegative = Integer.MIN_VALUE;
+
+        for (int x : arr) {
+            if (x == 0) {
+                zeroCount++;
+            } else if (x < 0) {
+                negCount++;
+                maxNegative = Math.max(maxNegative, x);
+            }
+        }
+
+        // All elements are 0
+        if (zeroCount == n) return 0;
+
+        // One negative and all others are 0
+        if (negCount == 1 && negCount + zeroCount == n)
+            return 0;
+
+        long product = 1;
+        boolean skipped = false;
+        int nonZeroCount = n - zeroCount;
+
+        for (int x : arr) {
+            if (x == 0) continue;
+
+            if ((negCount & 1) == 1 &&
+                x == maxNegative &&
+                !skipped &&
+                nonZeroCount > 1) {
+                skipped = true;
+                continue;
+            }
+
+            long val = x;
+            if (val < 0) val = (val % MOD + MOD) % MOD;
+
+            product = (product * val) % MOD;
+        }
+
+        return (int) product;
+    }
+}
