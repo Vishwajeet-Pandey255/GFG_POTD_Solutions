@@ -1,0 +1,23 @@
+class Solution {
+    public int numOfWays(int n, int m) {
+        long totalSquares = 1L * n * m;
+        
+        // Total ways to place two different colored knights
+        long totalWays = totalSquares * (totalSquares - 1);
+
+        // Number of attacking pairs (unordered)
+        long attackingPairs = 0;
+
+        if (n > 1 && m > 2) {
+            attackingPairs += 1L * (n - 1) * (m - 2);
+        }
+        if (n > 2 && m > 1) {
+            attackingPairs += 1L * (n - 2) * (m - 1);
+        }
+
+        // Each attacking pair can occur in two color orders
+        long attackingWays = 2 * attackingPairs * 2;
+
+        return (int)(totalWays - attackingWays);
+    }
+}
