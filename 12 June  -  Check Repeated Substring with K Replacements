@@ -1,0 +1,24 @@
+class Solution {
+    public boolean kSubstr(String s, int k) {
+        int n = s.length();
+
+        // String length must be divisible by k
+        if (n % k != 0) {
+            return false;
+        }
+
+        int blocks = n / k;
+        java.util.HashMap<String, Integer> map = new java.util.HashMap<>();
+        int maxFreq = 0;
+
+        for (int i = 0; i < n; i += k) {
+            String part = s.substring(i, i + k);
+            int freq = map.getOrDefault(part, 0) + 1;
+            map.put(part, freq);
+            maxFreq = Math.max(maxFreq, freq);
+        }
+
+        // Number of blocks that need to be changed
+        return (blocks - maxFreq) <= 1;
+    }
+}
