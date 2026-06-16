@@ -1,0 +1,25 @@
+class Solution {
+    public ArrayList<Integer> constructList(int[][] queries) {
+        ArrayList<Integer> arr = new ArrayList<>();
+        int xorVal = 0;
+
+        // Process queries in reverse
+        for (int i = queries.length - 1; i >= 0; i--) {
+            int type = queries[i][0];
+            int x = queries[i][1];
+
+            if (type == 1) {
+                xorVal ^= x;
+            } else {
+                arr.add(x ^ xorVal);
+            }
+        }
+
+        // Initial element 0
+        arr.add(xorVal);
+
+        Collections.sort(arr);
+
+        return arr;
+    }
+}
