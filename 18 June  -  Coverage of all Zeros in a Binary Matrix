@@ -1,0 +1,51 @@
+class Solution {
+    public int findCoverage(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+        int total = 0;
+
+        // Prefix sums for rows
+        int[][] rowPrefix = new int[n][m + 1];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                rowPrefix[i][j + 1] = rowPrefix[i][j] + mat[i][j];
+            }
+        }
+
+        // Prefix sums for columns
+        int[][] colPrefix = new int[n + 1][m];
+        for (int j = 0; j < m; j++) {
+            for (int i = 0; i < n; i++) {
+                colPrefix[i + 1][j] = colPrefix[i][j] + mat[i][j];
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 0) {
+                    int coverage = 0;
+
+                    // Left
+                    if (rowPrefix[i][j] > 0)
+                        coverage++;
+
+                    // Right
+                    if (rowPrefix[i][m] - rowPrefix[i][j + 1] > 0)
+                        coverage++;
+
+                    // Up
+                    if (colPrefix[i][j] > 0)
+                        coverage++;
+
+                    // Down
+                    if (colPrefix[n][j] - colPrefix[i + 1][j] > 0)
+                        coverage++;
+
+                    total += coverage;
+                }
+            }
+        }
+
+        return total;
+    }
+}
