@@ -1,0 +1,43 @@
+class Solution {
+    public String chooseSwap(String s) {
+        int n = s.length();
+        int[] freq = new int[26];
+        boolean[] seen = new boolean[26];
+
+        // count all characters
+        for (int i = 0; i < n; i++) {
+            freq[s.charAt(i) - 'a']++;
+        }
+
+        char[] arr = s.toCharArray();
+        char x = 0, y = 0;
+
+        for (int i = 0; i < n; i++) {
+            int curr = arr[i] - 'a';
+            freq[curr]--; // current character is no longer in suffix
+
+            // find a smaller character that exists later and is not in prefix
+            for (int ch = 0; ch < curr; ch++) {
+                if (freq[ch] > 0 && !seen[ch]) {
+                    x = arr[i];
+                    y = (char) (ch + 'a');
+                    break;
+                }
+            }
+
+            if (x != 0) break;
+
+            seen[curr] = true;
+        }
+
+        if (x == 0) return s;
+
+        // swap all occurrences of x and y
+        for (int i = 0; i < n; i++) {
+            if (arr[i] == x) arr[i] = y;
+            else if (arr[i] == y) arr[i] = x;
+        }
+
+        return new String(arr);
+    }
+}
