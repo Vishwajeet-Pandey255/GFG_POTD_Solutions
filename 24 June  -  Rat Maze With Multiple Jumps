@@ -1,0 +1,69 @@
+class Solution {
+
+    int n;
+    int[][] mat;
+    int[][] path;
+    boolean[][] visited;
+
+    public ArrayList<ArrayList<Integer>> shortestDist(int[][] mat) {
+
+        this.mat = mat;
+        n = mat.length;
+
+        ArrayList<ArrayList<Integer>> fail = new ArrayList<>();
+        fail.add(new ArrayList<>(Arrays.asList(-1)));
+
+        if (mat[0][0] == 0) return fail;
+
+        path = new int[n][n];
+        visited = new boolean[n][n];
+
+        if (!solve(0, 0)) return fail;
+
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            ArrayList<Integer> row = new ArrayList<>();
+            for (int j = 0; j < n; j++) {
+                row.add(path[i][j]);
+            }
+            ans.add(row);
+        }
+
+        return ans;
+    }
+
+    private boolean solve(int r, int c) {
+
+        if (r >= n || c >= n || mat[r][c] == 0)
+            return false;
+
+        if (r == n - 1 && c == n - 1) {
+            path[r][c] = 1;
+            return true;
+        }
+
+        if (visited[r][c])
+            return false;
+
+        path[r][c] = 1;
+
+        int jump = mat[r][c];
+
+        for (int k = 1; k <= jump; k++) {
+
+            // Right first
+            if (solve(r, c + k))
+                return true;
+
+            // Down second
+            if (solve(r + k, c))
+                return true;
+        }
+
+        path[r][c] = 0;
+        visited[r][c] = true; // mark impossible cell
+
+        return false;
+    }
+}
