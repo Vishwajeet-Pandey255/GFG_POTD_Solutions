@@ -1,0 +1,80 @@
+class Solution {
+    public int countCoordinates(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        boolean[][] pReach = new boolean[n][m];
+        boolean[][] qReach = new boolean[n][m];
+
+        java.util.ArrayDeque<int[]> queue = new java.util.ArrayDeque<>();
+
+        // Station P (Top row + Left column)
+        for (int i = 0; i < n; i++) {
+            if (!pReach[i][0]) {
+                pReach[i][0] = true;
+                queue.offer(new int[]{i, 0});
+            }
+        }
+        for (int j = 0; j < m; j++) {
+            if (!pReach[0][j]) {
+                pReach[0][j] = true;
+                queue.offer(new int[]{0, j});
+            }
+        }
+        bfs(mat, queue, pReach);
+
+        // Station Q (Bottom row + Right column)
+        queue.clear();
+        for (int i = 0; i < n; i++) {
+            if (!qReach[i][m - 1]) {
+                qReach[i][m - 1] = true;
+                queue.offer(new int[]{i, m - 1});
+            }
+        }
+        for (int j = 0; j < m; j++) {
+            if (!qReach[n - 1][j]) {
+                qReach[n - 1][j] = true;
+                queue.offer(new int[]{n - 1, j});
+            }
+        }
+        bfs(mat, queue, qReach);
+
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (pReach[i][j] && qReach[i][j]) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private void bfs(int[][] mat, java.util.ArrayDeque<int[]> queue, boolean[][] vis) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        while (!queue.isEmpty()) {
+            int[] cur = queue.poll();
+            int r = cur[0];
+            int c = cur[1];
+
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+
+                if (nr >= 0 && nr < n && nc >= 0 && nc < m &&
+                    !vis[nr][nc] &&
+                    mat[nr][nc] >= mat[r][c]) {
+
+                    vis[nr][nc] = true;
+                    queue.offer(new int[]{nr, nc});
+                }
+            }
+        }
+    }
+}
