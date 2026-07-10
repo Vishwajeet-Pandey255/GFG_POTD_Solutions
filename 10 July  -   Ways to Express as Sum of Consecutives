@@ -1,0 +1,18 @@
+class Solution {
+    public int getCount(int n) {
+        int count = 0;
+
+        for (int len = 2; (long) len * (len + 1) / 2 <= n; len++) {
+            int remaining = n - (len * (len - 1)) / 2;
+
+            if (remaining % len == 0) {
+                int start = remaining / len;
+                if (start >= 1) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+}
