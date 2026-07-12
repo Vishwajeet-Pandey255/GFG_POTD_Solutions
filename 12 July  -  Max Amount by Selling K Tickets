@@ -1,0 +1,23 @@
+class Solution {
+    public int maxAmount(int[] arr, int k) {
+        long MOD = 1000000007L;
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+
+        for (int x : arr) {
+            pq.offer(x);
+        }
+
+        long ans = 0;
+
+        while (k > 0 && !pq.isEmpty()) {
+            int top = pq.poll();
+            ans = (ans + top) % MOD;
+            if (top > 1) {
+                pq.offer(top - 1);
+            }
+            k--;
+        }
+
+        return (int) ans;
+    }
+}
