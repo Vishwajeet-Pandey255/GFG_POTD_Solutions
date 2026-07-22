@@ -1,0 +1,22 @@
+class Solution {
+    public int minDeletions(int[] arr) {
+        int n = arr.length;
+        int[] lis = new int[n];
+        int len = 0;
+
+        for (int num : arr) {
+            int l = 0, r = len;
+            while (l < r) {
+                int mid = l + (r - l) / 2;
+                if (lis[mid] < num)
+                    l = mid + 1;
+                else
+                    r = mid;
+            }
+            lis[l] = num;
+            if (l == len) len++;
+        }
+
+        return n - len;
+    }
+}
