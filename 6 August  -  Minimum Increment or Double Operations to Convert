@@ -1,0 +1,22 @@
+class Solution {
+    public int countMinOperations(int arr[]) {
+        int increments = 0;
+        int maxDoublings = 0;
+
+        for (int num : arr) {
+            int bits = 0;
+            while (num > 0) {
+                if ((num & 1) == 1) {
+                    increments++;
+                }
+                num >>= 1;
+                if (num > 0) {
+                    bits++;
+                }
+            }
+            maxDoublings = Math.max(maxDoublings, bits);
+        }
+
+        return increments + maxDoublings;
+    }
+}
