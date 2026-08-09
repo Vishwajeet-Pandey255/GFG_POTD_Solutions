@@ -1,0 +1,43 @@
+class Solution {
+    public int zigzagSequence(int[][] mat) {
+        int n = mat.length;
+
+        // dp[j] = maximum sum of a zigzag sequence
+        // ending at column j of the current row
+        int[] dp = new int[n];
+
+        // First row: sequence can start from any element
+        for (int j = 0; j < n; j++) {
+            dp[j] = mat[0][j];
+        }
+
+        // Process remaining rows
+        for (int i = 1; i < n; i++) {
+            int[] newDp = new int[n];
+
+            for (int j = 0; j < n; j++) {
+                int maxPrevious = Integer.MIN_VALUE;
+
+                // Previous element cannot be from the same column
+                for (int k = 0; k < n; k++) {
+                    if (k != j) {
+                        maxPrevious = Math.max(maxPrevious, dp[k]);
+                    }
+                }
+
+                newDp[j] = mat[i][j] + maxPrevious;
+            }
+
+            dp = newDp;
+        }
+
+        // Maximum sum ending anywhere in the last row
+        int answer = 0;
+
+        for (int j = 0; j < n; j++) {
+            answer = Math.max(answer, dp[j]);
+        }
+
+        return answer;
+    }
+}
