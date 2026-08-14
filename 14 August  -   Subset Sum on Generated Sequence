@@ -1,0 +1,42 @@
+class Solution {
+    public boolean isPossible(int[] arr, int s, int x) {
+        long total = s;
+        long current = s;
+
+        // Store only generated values that can possibly contribute to x
+        java.util.ArrayList<Long> sequence = new java.util.ArrayList<>();
+
+        if (current <= x) {
+            sequence.add(current);
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            current = total + arr[i];
+            total += current;
+
+            // Once current > x, all future values will also be > x
+            if (current > x) {
+                break;
+            }
+
+            sequence.add(current);
+        }
+
+        // Greedy subset sum from largest to smallest
+        long remaining = x;
+
+        for (int i = sequence.size() - 1; i >= 0; i--) {
+            long value = sequence.get(i);
+
+            if (value <= remaining) {
+                remaining -= value;
+            }
+
+            if (remaining == 0) {
+                return true;
+            }
+        }
+
+        return remaining == 0;
+    }
+}
