@@ -1,0 +1,47 @@
+class Solution {
+    private Integer[][][] dp;
+    private String s;
+    private int digitD;
+
+    public int countWithout(int n, int d) {
+        if (n <= 0) return 0;
+
+        s = String.valueOf(n);
+        digitD = d;
+        // dp[index][isLimit][isStarted]
+        dp = new Integer[s.length()][2][2];
+
+        return solve(0, true, false);
+    }
+
+    private int solve(int idx, boolean isLimit, boolean isStarted) {
+        // Base case: reached the end of the digit positions
+        if (idx == s.length()) {
+            return isStarted ? 1 : 0; // Count only if a valid positive number was formed
+        }
+
+        int limitIdx = isLimit ? 1 : 0;
+        int startedIdx = isStarted ? 1 : 0;
+
+        if (dp[idx][limitIdx][startedIdx] != null) {
+            return dp[idx][limitIdx][startedIdx];
+        }
+
+        int maxDigit = isLimit ? (s.charAt(idx) - '0') : 9;
+        int count = 0;
+
+        for (int digit = 0; digit <= maxDigit; digit++) {
+            // Skip the digit if it matches 'd' (excluding leading zeros)
+            if (digit == digitD && (isStarted || digit > 0)) {
+                continue;
+            }
+
+            boolean nextLimit = isLimit && (digit == maxDigit);
+            boolean nextStarted = isStarted || (digit > 0);
+
+            count += solve(idx + 1, nextLimit, nextStarted);
+        }
+
+        return dp[idx][limitIdx][startedIdx] = count;
+    }
+}
