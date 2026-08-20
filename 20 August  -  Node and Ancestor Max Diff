@@ -1,0 +1,30 @@
+class Solution {
+    int maxDiff(Node root) {
+        if (root == null) return Integer.MIN_VALUE;
+
+        int[] ans = {Integer.MIN_VALUE};
+        findMin(root, ans);
+
+        return ans[0];
+    }
+
+    int findMin(Node root, int[] ans) {
+        if (root == null) {
+            return Integer.MAX_VALUE;
+        }
+
+        // Minimum value among all descendants
+        int leftMin = findMin(root.left, ans);
+        int rightMin = findMin(root.right, ans);
+
+        int minDescendant = Math.min(leftMin, rightMin);
+
+        // Compare current node (ancestor) with its descendant
+        if (minDescendant != Integer.MAX_VALUE) {
+            ans[0] = Math.max(ans[0], root.data - minDescendant);
+        }
+
+        // Return minimum value in this subtree
+        return Math.min(root.data, minDescendant);
+    }
+}
