@@ -1,0 +1,38 @@
+class Solution {
+    int transform(String s1, String s2) {
+        if (s1.length() != s2.length()) {
+            return -1;
+        }
+
+        // Check if both strings contain the same characters
+        char[] a = s1.toCharArray();
+        char[] b = s2.toCharArray();
+
+        java.util.Arrays.sort(a);
+        java.util.Arrays.sort(b);
+
+        if (!java.util.Arrays.equals(a, b)) {
+            return -1;
+        }
+
+        int i = s1.length() - 1;
+        int j = s2.length() - 1;
+        int steps = 0;
+
+        /*
+         * Keep matching characters from the end.
+         * Characters that don't match need to be moved to the front.
+         */
+        while (i >= 0) {
+            if (s1.charAt(i) == s2.charAt(j)) {
+                i--;
+                j--;
+            } else {
+                steps++;
+                i--;
+            }
+        }
+
+        return steps;
+    }
+}
