@@ -1,0 +1,72 @@
+class Solution {
+    public int numberOfCells(int r, int c, int u, int d, char[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        if (mat[r][c] == '#') return 0;
+
+        // Minimum number of vertical moves needed to reach each cell.
+        // State: [minimum vertical moves, row]
+        int[][] dist = new int[n][m];
+
+        for (int i = 0; i < n; i++) {
+            java.util.Arrays.fill(dist[i], Integer.MAX_VALUE);
+        }
+
+        java.util.PriorityQueue<int[]> pq =
+                new java.util.PriorityQueue<>((a, b) -> Integer.compare(a[0], b[0]));
+
+        dist[r][c] = 0;
+        pq.offer(new int[]{0, r, c});
+
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        int answer = 0;
+
+        while (!pq.isEmpty()) {
+            int[] curr = pq.poll();
+            int verticalMoves = curr[0];
+            int x = curr[1];
+            int y = curr[2];
+
+            if (verticalMoves != dist[x][y]) continue;
+
+            /*
+             * If:
+             * upMoves - downMoves = r - x
+             * upMoves + downMoves = verticalMoves
+             *
+             * Then:
+             * upMoves   = (verticalMoves + r - x) / 2
+             * downMoves = (verticalMoves - r + x) / 2
+             */
+            int upMoves = (verticalMoves + r - x) / 2;
+            int downMoves = verticalMoves - upMoves;
+
+            if (upMoves <= u && downMoves <= d) {
+                answer++;
+            }
+
+            for (int k = 0; k < 4; k++) {
+                int nx = x + dr[k];
+                int ny = y + dc[k];
+
+                if (nx < 0 || nx >= n || ny < 0 || ny >= m ||
+                        mat[nx][ny] == '#') {
+                    continue;
+                }
+
+                // Moving up/down costs 1, left/right costs 0.
+                int newDist = verticalMoves + (k < 2 ? 1 : 0);
+
+                if (newDist < dist[nx][ny]) {
+                    dist[nx][ny] = newDist;
+                    pq.offer(new int[]{newDist, nx, ny});
+                }
+            }
+        }
+
+        return answer;
+    }
+}
