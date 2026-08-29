@@ -1,0 +1,32 @@
+class Solution {
+    public int countSubsequences(String s, int n) {
+        final int MOD = 1_000_000_007;
+
+        // dp[r] = number of non-empty subsequences formed so far
+        // whose value gives remainder r when divided by n.
+        long[] dp = new long[n];
+
+        for (int i = 0; i < s.length(); i++) {
+            int digit = s.charAt(i) - '0';
+
+            // Copy current states because every existing subsequence
+            // can either skip or include the current digit.
+            long[] next = dp.clone();
+
+            // Start a new subsequence with only this digit.
+            next[digit % n] = (next[digit % n] + 1) % MOD;
+
+            // Append current digit to every existing subsequence.
+            for (int rem = 0; rem < n; rem++) {
+                if (dp[rem] != 0) {
+                    int newRem = (int) ((rem * 10L + digit) % n);
+                    next[newRem] = (next[newRem] + dp[rem]) % MOD;
+                }
+            }
+
+            dp = next;
+        }
+
+        return (int) dp[0];
+    }
+}
