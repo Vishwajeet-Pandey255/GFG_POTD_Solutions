@@ -1,0 +1,66 @@
+class Solution {
+    static final long MOD = 1_000_000_007L;
+
+    public int palindromicStrings(int n, int k) {
+        long answer = 0;
+        long[] fact = new long[k + 1];
+        fact[0] = 1;
+
+        for (int i = 1; i <= k; i++) {
+            fact[i] = (fact[i - 1] * i) % MOD;
+        }
+
+        // Length 1
+        if (n >= 1) {
+            answer = k;
+        }
+
+        // For palindrome length >= 2:
+        // Every character used must occur exactly twice.
+        // Hence, only even length palindromes and odd length
+        // palindromes with one character in the center are possible.
+
+        for (int len = 2; len <= n; len++) {
+            int half = len / 2;
+
+            if (len % 2 == 0) {
+                // Even length: len = 2 * half
+                // Choose 'half' distinct characters and arrange them.
+                if (half <= k) {
+                    long ways = fact[k] * modInverse(fact[k - half]) % MOD;
+                    answer = (answer + ways) % MOD;
+                }
+            } else {
+                // Odd length: center character appears once.
+                // Remaining (len - 1) / 2 characters appear twice.
+                // Choose center, then choose and arrange distinct paired chars.
+                if (half < k) {
+                    long ways = k;
+                    ways = ways * fact[k - 1] % MOD;
+                    ways = ways * modInverse(fact[k - 1 - half]) % MOD;
+                    answer = (answer + ways) % MOD;
+                }
+            }
+        }
+
+        return (int) answer;
+    }
+
+    private long modInverse(long x) {
+        return power(x, MOD - 2);
+    }
+
+    private long power(long base, long exp) {
+        long result = 1;
+
+        while (exp > 0) {
+            if ((exp & 1) == 1) {
+                result = result * base % MOD;
+            }
+            base = base * base % MOD;
+            exp >>= 1;
+        }
+
+        return result;
+    }
+}
