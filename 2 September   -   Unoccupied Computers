@@ -1,0 +1,32 @@
+class Solution {
+    public int solve(int n, String s) {
+        boolean[] arrived = new boolean[26];
+        boolean[] usingComputer = new boolean[26];
+
+        int available = n;
+        int rejected = 0;
+
+        for (char ch : s.toCharArray()) {
+            int idx = ch - 'A';
+
+            if (!arrived[idx]) {
+                // First occurrence: customer arrives
+                arrived[idx] = true;
+
+                if (available > 0) {
+                    available--;
+                    usingComputer[idx] = true;
+                } else {
+                    rejected++;
+                }
+            } else {
+                // Second occurrence: customer departs
+                if (usingComputer[idx]) {
+                    available++;
+                }
+            }
+        }
+
+        return rejected;
+    }
+}
