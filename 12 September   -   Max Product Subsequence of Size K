@@ -1,0 +1,38 @@
+class Solution {
+    public int maxProduct(int[] arr, int k) {
+        int n = arr.length;
+
+        // maxDP[j] = maximum product using j elements
+        // minDP[j] = minimum product using j elements
+        long[] maxDP = new long[k + 1];
+        long[] minDP = new long[k + 1];
+
+        for (int j = 0; j <= k; j++) {
+            maxDP[j] = Long.MIN_VALUE;
+            minDP[j] = Long.MAX_VALUE;
+        }
+
+        maxDP[0] = 1;
+        minDP[0] = 1;
+
+        for (int num : arr) {
+            // Traverse backwards so each element is used only once
+            for (int j = Math.min(k, n); j >= 1; j--) {
+                if (maxDP[j - 1] == Long.MIN_VALUE) {
+                    continue;
+                }
+
+                long p1 = maxDP[j - 1] * num;
+                long p2 = minDP[j - 1] * num;
+
+                long newMax = Math.max(p1, p2);
+                long newMin = Math.min(p1, p2);
+
+                maxDP[j] = Math.max(maxDP[j], newMax);
+                minDP[j] = Math.min(minDP[j], newMin);
+            }
+        }
+
+        return (int) maxDP[k];
+    }
+}
