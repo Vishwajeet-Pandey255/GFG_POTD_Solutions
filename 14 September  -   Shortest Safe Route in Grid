@@ -1,0 +1,79 @@
+class Solution {
+    int shortestPath(int[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        // Mark cells that are unsafe
+        boolean[][] unsafe = new boolean[n][m];
+        int[] dr = {-1, 1, 0, 0};
+        int[] dc = {0, 0, -1, 1};
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 0) {
+                    unsafe[i][j] = true;
+
+                    for (int k = 0; k < 4; k++) {
+                        int ni = i + dr[k];
+                        int nj = j + dc[k];
+
+                        if (ni >= 0 && ni < n && nj >= 0 && nj < m) {
+                            unsafe[ni][nj] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        // BFS
+        boolean[][] visited = new boolean[n][m];
+
+        // Queue stores: row, column, distance
+        int[][] queue = new int[n * m][3];
+        int front = 0, rear = 0;
+
+        // Start from every safe cell in the leftmost column
+        for (int i = 0; i < n; i++) {
+            if (!unsafe[i][0]) {
+                queue[rear][0] = i;
+                queue[rear][1] = 0;
+                queue[rear][2] = 1;
+                rear++;
+
+                visited[i][0] = true;
+            }
+        }
+
+        while (front < rear) {
+            int r = queue[front][0];
+            int c = queue[front][1];
+            int dist = queue[front][2];
+            front++;
+
+            // Reached the rightmost column
+            if (c == m - 1) {
+                return dist;
+            }
+
+            for (int k = 0; k < 4; k++) {
+                int nr = r + dr[k];
+                int nc = c + dc[k];
+
+                if (nr >= 0 && nr < n &&
+                    nc >= 0 && nc < m &&
+                    !unsafe[nr][nc] &&
+                    !visited[nr][nc]) {
+
+                    visited[nr][nc] = true;
+
+                    queue[rear][0] = nr;
+                    queue[rear][1] = nc;
+                    queue[rear][2] = dist + 1;
+                    rear++;
+                }
+            }
+        }
+
+        return -1;
+    }
+}
