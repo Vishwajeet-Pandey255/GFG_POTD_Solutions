@@ -1,0 +1,83 @@
+/* Structure of binary tree Node
+class Node {
+    int data;
+    Node left, right;
+
+    Node(int x) {
+        data = x;
+        left = right = null;
+    }
+}
+*/
+
+class Solution {
+    public boolean areAnagrams(Node root1, Node root2) {
+
+        if (root1 == null && root2 == null) {
+            return true;
+        }
+
+        if (root1 == null || root2 == null) {
+            return false;
+        }
+
+        java.util.Queue<Node> q1 = new java.util.LinkedList<>();
+        java.util.Queue<Node> q2 = new java.util.LinkedList<>();
+
+        q1.offer(root1);
+        q2.offer(root2);
+
+        while (!q1.isEmpty() && !q2.isEmpty()) {
+
+            int size1 = q1.size();
+            int size2 = q2.size();
+
+            // Corresponding levels must have the same number of nodes
+            if (size1 != size2) {
+                return false;
+            }
+
+            java.util.HashMap<Integer, Integer> freq = new java.util.HashMap<>();
+
+            // Process current level of first tree
+            for (int i = 0; i < size1; i++) {
+                Node node = q1.poll();
+
+                freq.put(node.data, freq.getOrDefault(node.data, 0) + 1);
+
+                if (node.left != null) {
+                    q1.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    q1.offer(node.right);
+                }
+            }
+
+            // Process current level of second tree
+            for (int i = 0; i < size2; i++) {
+                Node node = q2.poll();
+
+                freq.put(node.data, freq.getOrDefault(node.data, 0) - 1);
+
+                if (node.left != null) {
+                    q2.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    q2.offer(node.right);
+                }
+            }
+
+            // Every frequency must become zero
+            for (int count : freq.values()) {
+                if (count != 0) {
+                    return false;
+                }
+            }
+        }
+
+        // Both trees must finish at the same time
+        return q1.isEmpty() && q2.isEmpty();
+    }
+}
