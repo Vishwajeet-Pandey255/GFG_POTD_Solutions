@@ -1,0 +1,93 @@
+class Solution {
+    public int maxStackHeight(int[] r, int[] h) {
+        int n = r.length;
+
+        // Store {radius, height}
+        int[][] discs = new int[n][2];
+
+        for (int i = 0; i < n; i++) {
+            discs[i][0] = r[i];
+            discs[i][1] = h[i];
+        }
+
+        // Sort by radius
+        // If radius is same, sort by height
+        java.util.Arrays.sort(discs, (a, b) -> {
+            if (a[0] != b[0]) {
+                return Integer.compare(a[0], b[0]);
+            }
+            return Integer.compare(a[1], b[1]);
+        });
+
+        /*
+         * Since height <= 1000, Fenwick Tree can be used.
+         * tree[x] = maximum stack height for a disc whose
+         * height is <= x.
+         */
+        int MAX_H = 1000;
+        int[] tree = new int[MAX_H + 1];
+
+        int answer = 0;
+
+        int i = 0;
+
+        while (i < n) {
+            int j = i;
+
+            // Find all discs having the same radius.
+            while (j < n && discs[j][0] == discs[i][0]) {
+                j++;
+            }
+
+            /*
+             * First calculate answers for all discs with this radius.
+             * We do NOT update the Fenwick tree yet.
+             *
+             * This is important because two discs with the same
+             * radius cannot be placed on each other.
+             */
+            int[] dp = new int[j - i];
+
+            for (int k = i; k < j; k++) {
+                int height = discs[k][1];
+
+                // Need previous height strictly smaller.
+                int bestBelow = query(tree, height - 1);
+
+                dp[k - i] = bestBelow + height;
+
+                answer = Math.max(answer, dp[k - i]);
+            }
+
+            // Now update the tree after processing this radius group.
+            for (int k = i; k < j; k++) {
+                int height = discs[k][1];
+                update(tree, height, dp[k - i]);
+            }
+
+            i = j;
+        }
+
+        return answer;
+    }
+
+    // Returns maximum value for heights <= index.
+    private int query(int[] tree, int index) {
+        int result = 0;
+
+        while (index > 0) {
+            result = Math.max(result, tree[index]);
+            index -= index & -index;
+        }
+
+        return result;
+    }
+
+    // Updates the maximum value at the given height.
+    private void update(int[] tree, int index, int value) {
+        while (index < tree.length) {
+            tree[index] = Math.max(tree[index], value);
+            index += index & -index;
+        }
+    }
+}
