@@ -1,0 +1,33 @@
+class Solution {
+    public int minimumCost(int x, int s, int m, int l, int cs, int cm, int cl) {
+        int INF = 1_000_000_000;
+        int[] dp = new int[x + l + 1];
+
+        for (int i = 1; i < dp.length; i++) {
+            dp[i] = INF;
+        }
+
+        dp[0] = 0;
+
+        for (int i = 0; i <= x; i++) {
+            if (dp[i] == INF) continue;
+
+            dp[Math.min(x, i + s)] = Math.min(
+                dp[Math.min(x, i + s)],
+                dp[i] + cs
+            );
+
+            dp[Math.min(x, i + m)] = Math.min(
+                dp[Math.min(x, i + m)],
+                dp[i] + cm
+            );
+
+            dp[Math.min(x, i + l)] = Math.min(
+                dp[Math.min(x, i + l)],
+                dp[i] + cl
+            );
+        }
+
+        return dp[x];
+    }
+}
