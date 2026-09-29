@@ -1,0 +1,51 @@
+class Solution {
+    public int minStepToReachTarget(int knightPos[], int targetPos[], int n) {
+
+        // If already at target
+        if (knightPos[0] == targetPos[0] && knightPos[1] == targetPos[1]) {
+            return 0;
+        }
+
+        int[] dx = {2, 2, -2, -2, 1, 1, -1, -1};
+        int[] dy = {1, -1, 1, -1, 2, -2, 2, -2};
+
+        boolean[][] visited = new boolean[n + 1][n + 1];
+
+        // Queue stores {row, column, steps}
+        java.util.Queue<int[]> queue = new java.util.LinkedList<>();
+
+        int startX = knightPos[0];
+        int startY = knightPos[1];
+
+        queue.offer(new int[]{startX, startY, 0});
+        visited[startX][startY] = true;
+
+        while (!queue.isEmpty()) {
+            int[] current = queue.poll();
+
+            int x = current[0];
+            int y = current[1];
+            int steps = current[2];
+
+            for (int i = 0; i < 8; i++) {
+                int nx = x + dx[i];
+                int ny = y + dy[i];
+
+                // Check board boundaries
+                if (nx >= 1 && nx <= n && ny >= 1 && ny <= n
+                        && !visited[nx][ny]) {
+
+                    // Target reached
+                    if (nx == targetPos[0] && ny == targetPos[1]) {
+                        return steps + 1;
+                    }
+
+                    visited[nx][ny] = true;
+                    queue.offer(new int[]{nx, ny, steps + 1});
+                }
+            }
+        }
+
+        return -1;
+    }
+}
