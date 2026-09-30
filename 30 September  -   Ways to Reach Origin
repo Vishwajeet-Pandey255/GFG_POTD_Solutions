@@ -1,0 +1,22 @@
+class Solution {
+    public int ways(int x, int y) {
+        final int MOD = 1000000007;
+
+        // dp[j] = number of ways to reach current cell
+        int[] dp = new int[y + 1];
+
+        // There is exactly 1 way along the x-axis
+        for (int j = 0; j <= y; j++) {
+            dp[j] = 1;
+        }
+
+        // Build paths using left/down movements
+        for (int i = 1; i <= x; i++) {
+            for (int j = 1; j <= y; j++) {
+                dp[j] = (dp[j] + dp[j - 1]) % MOD;
+            }
+        }
+
+        return dp[y];
+    }
+}
