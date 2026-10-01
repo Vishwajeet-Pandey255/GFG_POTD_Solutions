@@ -1,0 +1,66 @@
+class Solution {
+    public int minTime(int[] duration, int[][] dependencies) {
+        int n = duration.length;
+
+        // Build graph
+        ArrayList<Integer>[] graph = new ArrayList[n];
+        int[] indegree = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for (int[] edge : dependencies) {
+            int u = edge[0];
+            int v = edge[1];
+
+            graph[u].add(v);
+            indegree[v]++;
+        }
+
+        // Earliest completion time of each module
+        int[] finishTime = new int[n];
+
+        // Modules with no dependencies can start immediately
+        Queue<Integer> queue = new ArrayDeque<>();
+
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                finishTime[i] = duration[i];
+                queue.offer(i);
+            }
+        }
+
+        int processed = 0;
+        int answer = 0;
+
+        // Topological Sort
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            processed++;
+
+            answer = Math.max(answer, finishTime[u]);
+
+            for (int v : graph[u]) {
+                // v can start after u is completed
+                finishTime[v] = Math.max(
+                    finishTime[v],
+                    finishTime[u] + duration[v]
+                );
+
+                indegree[v]--;
+
+                if (indegree[v] == 0) {
+                    queue.offer(v);
+                }
+            }
+        }
+
+        // If not all modules were processed, there is a cycle
+        if (processed != n) {
+            return -1;
+        }
+
+        return answer;
+    }
+}
