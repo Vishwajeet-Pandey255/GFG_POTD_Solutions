@@ -1,0 +1,70 @@
+class Solution {
+    public ArrayList<ArrayList<Integer>> formCoils(int n) {
+        int N = 4 * n;
+
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        ArrayList<Integer> coil1 = new ArrayList<>();
+        ArrayList<Integer> coil2 = new ArrayList<>();
+
+        // First coil: Down -> Right -> Up -> Left
+        for (int k = 0; k < N; k += 2) {
+            int top = k;
+            int bottom = N - 1 - k;
+            int left = k;
+            int right = N - 1 - k;
+
+            // Down
+            for (int i = top; i <= bottom; i++) {
+                coil1.add(i * N + left + 1);
+            }
+
+            // Right
+            for (int j = left + 1; j <= right - 1; j++) {
+                coil1.add(bottom * N + j + 1);
+            }
+
+            // Up
+            for (int i = bottom - 1; i >= top + 1; i--) {
+                coil1.add(i * N + right);
+            }
+
+            // Left
+            for (int j = right - 2; j >= left + 2; j--) {
+                coil1.add((top + 1) * N + j + 1);
+            }
+        }
+
+        // Second coil: Up -> Left -> Down -> Right
+        for (int k = 0; k < N; k += 2) {
+            int top = k;
+            int bottom = N - 1 - k;
+            int left = k;
+            int right = N - 1 - k;
+
+            // Up
+            for (int i = bottom; i >= top; i--) {
+                coil2.add(i * N + right + 1);
+            }
+
+            // Left
+            for (int j = right - 1; j >= left + 1; j--) {
+                coil2.add(top * N + j + 1);
+            }
+
+            // Down
+            for (int i = top + 1; i <= bottom - 1; i++) {
+                coil2.add(i * N + left + 2);
+            }
+
+            // Right
+            for (int j = left + 2; j <= right - 2; j++) {
+                coil2.add((bottom - 1) * N + j + 1);
+            }
+        }
+
+        ans.add(coil1);
+        ans.add(coil2);
+
+        return ans;
+    }
+}
