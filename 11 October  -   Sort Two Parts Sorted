@@ -1,0 +1,44 @@
+class Solution {
+    public void mergeTwoParts(int[] arr) {
+        int n = arr.length;
+        int breakPoint = -1;
+
+        // Find the point where the sorted order breaks
+        for (int i = 1; i < n; i++) {
+            if (arr[i] < arr[i - 1]) {
+                breakPoint = i;
+                break;
+            }
+        }
+
+        // If the array is already sorted
+        if (breakPoint == -1) {
+            return;
+        }
+
+        int[] temp = new int[n];
+        int i = 0, j = breakPoint, k = 0;
+
+        // Merge the two sorted parts
+        while (i < breakPoint && j < n) {
+            if (arr[i] <= arr[j]) {
+                temp[k++] = arr[i++];
+            } else {
+                temp[k++] = arr[j++];
+            }
+        }
+
+        // Copy remaining elements of the first part
+        while (i < breakPoint) {
+            temp[k++] = arr[i++];
+        }
+
+        // Copy remaining elements of the second part
+        while (j < n) {
+            temp[k++] = arr[j++];
+        }
+
+        // Copy the merged result back to the original array
+        System.arraycopy(temp, 0, arr, 0, n);
+    }
+}
