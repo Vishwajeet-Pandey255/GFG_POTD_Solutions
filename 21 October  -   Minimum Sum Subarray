@@ -1,0 +1,13 @@
+class Solution {
+    public int minSubarraySum(int[] arr) {
+        int minEndingHere = arr[0];
+        int minSum = arr[0];
+
+        for (int i = 1; i < arr.length; i++) {
+            minEndingHere = Math.min(arr[i], minEndingHere + arr[i]);
+            minSum = Math.min(minSum, minEndingHere);
+        }
+
+        return minSum;
+    }
+}
