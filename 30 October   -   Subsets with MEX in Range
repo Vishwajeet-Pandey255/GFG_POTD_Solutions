@@ -1,0 +1,43 @@
+
+class Solution {
+    public int cntSubsets(int arr[], int l, int r) {
+        final long MOD = 1000000007L;
+        int n = arr.length;
+
+        int[] freq = new int[n + 1];
+
+        for (int num : arr) {
+            freq[num]++;
+        }
+
+        // Precompute powers of 2
+        long[] pow2 = new long[n + 1];
+        pow2[0] = 1;
+
+        for (int i = 1; i <= n; i++) {
+            pow2[i] = (pow2[i - 1] * 2) % MOD;
+        }
+
+        long ans = 0;
+        long required = 1;
+        int prefixCount = 0;
+
+        for (int mex = 0; mex <= r; mex++) {
+
+            if (mex >= l) {
+                int remaining = n - prefixCount - freq[mex];
+
+                long ways = (required * pow2[remaining]) % MOD;
+
+                ans = (ans + ways) % MOD;
+            }
+
+            // All occurrences of mex must be included
+            required = (required * (pow2[freq[mex]] - 1 + MOD)) % MOD;
+
+            prefixCount += freq[mex];
+        }
+
+        return (int) ans;
+    }
+}
