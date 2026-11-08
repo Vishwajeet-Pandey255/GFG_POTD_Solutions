@@ -1,0 +1,35 @@
+class Solution {
+    public ArrayList<String> generateUsernames(String[] arr) {
+        ArrayList<String> result = new ArrayList<>();
+
+        HashSet<String> reserved = new HashSet<>();
+        HashSet<String> assigned = new HashSet<>();
+        HashMap<String, Integer> nextSuffix = new HashMap<>();
+
+        // Initially reserve all usernames from the input
+        for (String name : arr) {
+            reserved.add(name);
+        }
+
+        for (String name : arr) {
+            if (!assigned.contains(name)) {
+                result.add(name);
+                assigned.add(name);
+            } else {
+                int suffix = nextSuffix.getOrDefault(name, 1);
+                String candidate = name + suffix;
+
+                while (reserved.contains(candidate) || assigned.contains(candidate)) {
+                    suffix++;
+                    candidate = name + suffix;
+                }
+
+                result.add(candidate);
+                assigned.add(candidate);
+                nextSuffix.put(name, suffix + 1);
+            }
+        }
+
+        return result;
+    }
+}
