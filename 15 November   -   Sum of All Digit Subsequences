@@ -1,0 +1,31 @@
+class Solution {
+    public int subsequenceSum(String s) {
+        long MOD = 1000000007;
+        long sum = 0;
+
+        for (int i = 0; i < s.length(); i++) {
+            long digit = s.charAt(i) - '0';
+
+            // Each digit appears in 2^(n-1) subsequences
+            sum = (sum + digit * powerOfTwo(s.length() - 1, MOD)) % MOD;
+        }
+
+        return (int) sum;
+    }
+
+    private long powerOfTwo(int n, long mod) {
+        long result = 1;
+        long base = 2;
+
+        while (n > 0) {
+            if ((n & 1) == 1) {
+                result = (result * base) % mod;
+            }
+
+            base = (base * base) % mod;
+            n >>= 1;
+        }
+
+        return result;
+    }
+}
