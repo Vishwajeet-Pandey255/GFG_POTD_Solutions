@@ -1,0 +1,34 @@
+class Solution {
+    public char posInfinite(String s, int pos) {
+        long p = pos;
+        long len = s.length();
+        long step = 1;
+
+        // Step 1: Expand length until it covers 'pos'
+        while (len < p) {
+            len = 2 * len + step;
+            step++;
+        }
+
+        // Step 2: Trace backward to map 'p' to the original string
+        while (step > 1) {
+            step--;
+            long prevLen = (len - step) / 2;
+
+            if (p <= prevLen) {
+                // Position lies in the left (unmodified) part
+                len = prevLen;
+            } else if (p <= prevLen + step) {
+                // Position lies in the middle '$' characters
+                return '$';
+            } else {
+                // Position lies in the right (reversed) part
+                p = len - p + 1;
+                len = prevLen;
+            }
+        }
+
+        // Step 3: Base case (1-based to 0-based index)
+        return s.charAt((int) (p - 1));
+    }
+}
