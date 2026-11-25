@@ -1,0 +1,86 @@
+
+class Solution {
+    static final long MOD = 1000000007L;
+
+    long getTime(long a, long b, long d) {
+        long c = a - b;
+        long k = Math.max(0L, (d - a + c - 1) / c);
+
+        return k * (a + b) + (d - k * c);
+    }
+
+    long sumCeil(long n, long c) {
+        if (n <= 0) return 0;
+
+        long q = n / c;
+        long rem = n % c;
+
+        return c * q * (q + 1) / 2 + rem * (q + 1);
+    }
+
+    long sumJumpTime(long L, long R, long a, long b) {
+        if (L > R) return 0;
+
+        long count = R - L + 1;
+        long sum = (L + R) * count / 2;
+
+        long start = Math.max(L, a + 1);
+
+        if (start <= R) {
+            long x = start - a;
+            long y = R - a;
+
+            long kSum = sumCeil(y, a - b)
+                      - sumCeil(x - 1, a - b);
+
+            sum += 2L * b * kSum;
+        }
+
+        return sum + count;
+    }
+
+    public int minTime(int a, int b, int d, int l, int r) {
+
+        long normalTime = getTime(a, b, d);
+
+        // Find the largest q for which jumping is faster.
+        long low = d - r;
+        long high = d - l;
+        long best = low - 1;
+
+        while (low <= high) {
+            long mid = low + (high - low) / 2;
+
+            long jumpTime = getTime(a, b, mid) + 1;
+
+            if (jumpTime < normalTime) {
+                best = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+
+        long L = d - r;
+        long R = d - l;
+
+        long ans = 0;
+
+        // Jump is the optimal choice.
+        long jumpEnd = Math.min(R, best);
+
+        if (L <= jumpEnd) {
+            ans = sumJumpTime(L, jumpEnd, a, b);
+        }
+
+        // Normal movement is the optimal choice.
+        long normalStart = Math.max(L, best + 1);
+
+        if (normalStart <= R) {
+            long count = R - normalStart + 1;
+            ans += (count % MOD) * (normalTime % MOD);
+        }
+
+        return (int) (ans % MOD);
+    }
+}
